@@ -2,56 +2,90 @@
 include("database/db_conection.php");//make connection here
 
 if(isset($_POST['submit'])){	
-	$expdate 		= $_POST['expdate'];
-	$paymentype 	= $_POST['paymentype'];
-	$payeetype 		= $_POST['payeetype'];
-	$payee 			= $_POST['payee'];
-	$invoiceno 		= $_POST['invoiceno'];
-	$createdby 		= $_POST['createdby'];
-	$exp_notes 		= $_POST['exp_notes'];
-	//$accountname	= $_POST['accountname'];
-	$desc 			= $_POST['desc'];
-	
-	$target_dir = "upload/";
-	$target_file = $target_dir . basename($_FILES["image"]["name"]);
-	$uploadOk = 1;
-	$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+	$expdate=$_POST['expdate'];//same
+    $expacctname=$_POST['expacctname'];//same
+	$payee=$_POST['payee'];//same
+	$payeetype=$_POST['payeetype'];//same
+	$paymentype=$_POST['paymentype'];//same
+	$notes=$_POST['notes'];//same
+	//$image=$_POST['image'];//same
+	$createdby = $_POST['createdby'];
+	$amount = $_POST['amount'];//same
+			
 
-    if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+//$image =base64_encode($image);	
+$target_dir = "upload/";
+$target_file = $target_dir . basename($_FILES["image"]["name"]);
+$uploadOk = 1;
+$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+// Check if image file is a actual image or fake image
+    $check = getimagesize($_FILES["image"]["tmp_name"]);
+    if($check !== false) {
+        if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+        //echo "The file ". basename( $_FILES["image"]["name"]). " has been uploaded.";
     } else {
         echo "Sorry, there was an error uploading your file.";
     }
+		
+	} else {
+        echo "File is not an image.";
+        $uploadOk = 0;
+    }
 	
-
+	$voucherid ="";
+	$prefix = "0000";
 	
-	$sql = 'INSERT INTO expenses_master(`type`, `payee`, `inv_no`, `notes`, `reference_doc`,`createdby`) VALUES ("'.$paymentype.'","'.$payee.'","'.$invoiceno.'","'.$exp_notes.'","'.$target_file.'","'.$createdby.'")';
-	if(mysqli_query($dbcon,$sql))
-	{
-		//-----------------------------------------------------------------------
-		
-		$lastid = mysqli_insert_id($dbcon);
-		$i=0;
-		
-		
-		foreach($_POST['desc'] as $key=>$val){
-			$desc 	 	= $val;
-			$qty		= '';
-			$price   	= $_POST['price'][$i];
-			$category   = $_POST['category'][$i];
-			//$amount 	= $_POST['amount'][$i];
-			$taxname  	= $_POST['gstval'][$i];
-			
-
-			$sqql = 'INSERT INTO `expenses_lines`(header_id, `category`, `description`, `qty`, `amount`, `gst`,`rate`) 
-			VALUES ('.$lastid.',"'.$category.'","'.$desc.'","'.$qty.'","'.$price.'","'.$taxname.'","")';
-			mysqli_query($dbcon,$sqql);
-			$i++;
+	//Generating VoucherIDS
+	$sql="SELECT MAX(id) as latest_id FROM recordexpense ORDER BY id DESC";
+	if($result = mysqli_query($dbcon,$sql)){
+		$row   = mysqli_fetch_assoc($result);
+		if(mysqli_num_rows($result)>0){
+			$maxid = $row['latest_id'];
+			$maxid+=1;			
+			$voucherid = $prefix.$maxid;
+		}else{
+			$maxid = 0;
+			$maxid+=1;
+			$voucherid = $prefix.$maxid;
 		}
-		
-		//-----------------------------------------------------------------------
-		echo "<script>alert('Expense Master creation Successful ');
-			window.location.href = 'vocher.php?id=".$lastid."';
-		</script>";
+	}
+
+	$sql="INSERT INTO recordexpense(`voucherid`, 	
+									`date`, 	
+									`accountname`, 	
+									`payee`, 	
+									`payeetype`, 	
+									`paymentype`,
+									`amount`,														
+									`notes`, 	
+									`image`,
+									`createdby`)
+							VALUES ('$voucherid',
+									'$expdate',
+									'$expacctname',
+									'$payee',
+									'$payeetype',
+									'$paymentype',
+									'$amount',
+									'$notes',
+									'$target_file',
+									'$createdby')";													    
+					
+	//echo "$insert_recordexpense";
+	// Inserting Log details into ExpenseNoteslog
+	$sql1= "INSERT into expensenoteslog(`voucherid`,
+										`notes`,
+										`createdby`,
+										`createdon`)
+								  VALUES('$voucherid',
+								         '$notes',
+										 '$createdby',
+										 '$expdate')";
+										
+	if(mysqli_query($dbcon,$sql)&& mysqli_query($dbcon,$sql1))
+	{
+		echo "<script>alert('Expense Master creation Successful ')</script>";
+		header("location:listExpenses.php");
     } else {
 		die('Error: ' . mysqli_error($dbcon));
 		exit;
@@ -246,18 +280,20 @@ if(isset($_POST['submit'])){
 <tr class="tr-header">
 <th width="30%">Category</th>
 <th width="25%">Description</th>
-<!--<th width="10%">Qty</th>-->
+<th width="10%">Qty</th>
+<th width="15%"><i class="fa fa-rupee fonts" aria-hidden="true"><b>&nbsp;Rate</i></th>
 <th width="15%" > <i class="fa fa-rupee fonts" aria-hidden="true"><b>&nbsp;Amount</b></i></th>
+<!-- <th width="8%"> <i class="fa fa-rupee fonts" aria-hidden="true"><b>&nbsp;Discount</b></i></th>-->
 <th width="20%"> GST@%</th> 
-<th width="15%"><b>&nbsp;GST Amount</b></th>
+<!--th width="20%"> <i class="fa fa-rupee fonts" aria-hidden="true"><b>&nbsp;Total</b></i></th-->
 <th><a href="javascript:void(0);" style="font-size:18px;" id="addMore" title="Add More Person">
 <span class="glyphicon glyphicon-plus"></span>+</a></th>
 
 </tr>
 <tr>
 	<td>
-		<select name="category[]" class="form-control itemcode">
-			<option value=""  selected>-Select Category--</option>
+		<select name="accountname" class="form-control itemcode">
+			<option value="" name="accountname" selected>-Select Category--</option>
 			<?php $qr  = "SELECT * FROM expenseacctmaster ";
 				  $exc = mysqli_query($dbcon,$qr)or die();
 				  while($r = mysqli_fetch_array($exc)){ ?>
@@ -274,13 +310,32 @@ if(isset($_POST['submit'])){
 								  
 	<!--td><input type="text" name="description" placeholder="Item Name" class="form-control"></td
 	<td><input type="text" name="itemcode" placeholder="Item Details" class="form-control"></td>-->
-	<td><input type="text" name="desc[]"   id="desc" placeholder="Description"    data-id="" class="form-control hsncode"></td>
-	<!--<td><input type="text" name="qty[]"    id="qty"   placeholder="Qty" data-id="" class="form-control qty"></td>-->
-	<td><input type="text" name="price[]"  id="price" placeholder="Rate/Qty"    data-id="" class="form-control price"></td>
+	<td><input type="text" name="desc[]" placeholder="Description"    data-id="" class="form-control hsncode"></td>
+	<td><input type="text" name="qty[]"   placeholder="Qty" data-id="" class="form-control qty"></td>
+	<td><input type="text" name="price[]" placeholder="Rate/Qty"    data-id="" class="form-control price"></td>
+	<td><input type="text" name="amount[]" placeholder="qtyXRate" data-id="" class="form-control amount"></td>
 	
-	<td><input type="text" name="gsttax[]" id="gsttax" placeholder="GST Tax" data-id="" class="form-control"></td>
-	<td><input type="text" name="gstval[]" id="gstval" placeholder="gstval" data-id="" onblur="Settext()" class="gstval form-control"></td>
-<td><a href='javascript:void(0);'  class='remove'><span class='glyphicon glyphicon-remove'></span>-</a></td>
+	<td>                       
+                                            <select class="form-control amount" id="taxname"  onchange="rowitem.update_math_vals('po');"; name="taxname" style="line-height:1.5;">
+                                                <option data-type="single" value="0" selected>Open Taxrate</option>
+                                                <?php 
+
+                                                $sql = mysqli_query($dbcon, "SELECT id,taxname,taxrate,taxtype FROM taxmaster ");
+                                                while ($row = $sql->fetch_assoc()){	
+                                                    $taxname=$row['taxname'];
+                                                    $taxrate=$row['taxrate'];
+                                                    $taxtype=$row['taxtype'];
+                                                    $taxid=$row['id'];
+                                                    echo '<option data-type="'.$taxtype.'"  data-rate="'.$taxrate.'" value="'.$taxid.'" >'.$taxname.'</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </td>
+	
+	<!-- <td><input type="text" name="discount[]" class="form-control discount" placeholder="Itm wise Disc"></td> -->
+	<!--<td><input type="text" name="gst[]" placeholder="GST Rate%" data-id=""  class="form-control gst" ></td>
+	<!--td><input type="text" name="total[]" class="form-control total" data-id="" placeholder="Item Total"></td-->
+	<td><a href='javascript:void(0);'  class='remove'><span class='glyphicon glyphicon-remove'></span>-</a></td>
 </tr>
 </table>
 
@@ -430,22 +485,4 @@ $(function(){
            }
       });
 });      
-
-function Settext(){
-	var posubtotal = 0;
-	var tottax = 0;
-	var subtotal = 0;
-	$('.price').each(function() {
-		posubtotal = parseInt(posubtotal) + parseInt($(this).val());
-	});
-	
-	$('.gstval').each(function() {
-		tottax = parseInt(tottax) + parseInt($(this).val());
-	});
-	
-	subtotal = parseInt(posubtotal) + parseInt(tottax);
-	$('#posubtotal').text(posubtotal);
-	$('#tottax').text(tottax);
-	$('#grandtotal').text(subtotal);
-}
 </script>

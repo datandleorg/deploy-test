@@ -185,8 +185,22 @@ function get_itemDetails($dbcon,$code){
                                                 <?php echo get_grandtotal($grn_po_items_arr);?>
                                             </td>
                                         </tr>
-                                        <?php echo get_taxtype($grn_po_items_arr); ?>
+                                        <?php
+                                        for($i=0;$i<count($grn_po_items_arr);$i++){
+                                        ?>
+                                        <tr>
+                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
+                                                <?php echo get_taxtype($grn_po_items_arr[$i]); ?>
+                                            </td>
+                                            <td style="text-align:center;padding:10px;">
+                                                <?php echo get_taxvals($grn_po_items_arr[$i]);
+                                                ?>
 
+                                            </td>
+                                        </tr>
+                                        <?php
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
                             </td>

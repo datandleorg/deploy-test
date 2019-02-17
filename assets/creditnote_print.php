@@ -200,8 +200,20 @@ function convertNumberToWord($num = false)
                                                 <?php echo get_grandtotal($inv_items_arr);?>
                                             </td>
                                         </tr>
-                                        <?php echo get_taxtype($inv_items_arr); ?>
-
+                                        <?php
+                                        for($i=0;$i<count($inv_items_arr);$i++){
+                                        ?>
+                                        <tr>
+                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
+                                                GST at <?php echo $inv_items_arr[$i]->tax_val."%"; ?>
+                                            </td>
+                                            <td style="text-align:center;padding:10px;"> 
+                                                <?php echo gettaxamt_print($inv_items_arr[$i]);?>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
                             </td>

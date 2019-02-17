@@ -236,8 +236,22 @@ function convertNumberToWord($num = false)
                                                 <?php echo nf(get_grandtotal($po_items_arr));?>
                                             </td>
                                         </tr>
-                                     
-                                                <?php echo get_taxtype($po_items_arr); ?>
+                                        <?php
+                                        for($i=0;$i<count($po_items_arr);$i++){
+                                        ?>
+                                        <tr>
+                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
+                                                <?php echo get_taxtype($po_items_arr[$i]); ?>
+                                            </td>
+                                            <td style="text-align:center;padding:10px;">
+                                                <?php echo get_taxvals($po_items_arr[$i]);
+                                                 ?>
+
+                                            </td>
+                                        </tr>
+                                        <?php
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
                             </td>

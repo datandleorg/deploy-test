@@ -201,7 +201,22 @@ function convertNumberToWord($num = false)
                                                 <?php echo nf(get_grandtotal($est_items_arr));?>
                                             </td>
                                         </tr>
-                                        <?php echo get_taxtype($est_items_arr); ?>
+                                        <?php
+                                        for($i=0;$i<count($est_items_arr);$i++){
+                                        ?>
+                                        <tr>
+                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
+                                                <?php echo get_taxtype($est_items_arr[$i]); ?>
+                                            </td>
+                                            <td style="text-align:center;padding:10px;">
+                                                <?php echo get_taxvals($est_items_arr[$i]);
+                                                ?>
+
+                                            </td>
+                                        </tr>
+                                        <?php
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
                             </td>
@@ -217,6 +232,8 @@ function convertNumberToWord($num = false)
 
                                     </tbody>
                                 </table>
+
+
 
                             </td>
                             <td style="border:1px solid #000;padding:0px;">

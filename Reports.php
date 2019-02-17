@@ -229,12 +229,6 @@
                                     <tr>
                                         <td><a href="listVendorRefunds.php">
                                             <i class="fa fa-angle-right bigfonts" aria-hidden="true"></i> &nbsp;Refund History</td>
-                                            
-                                            <td>
-                                            <a href="salesItemwiseReport.php">
-                                                <i class="fa fa-angle-right bigfonts" aria-hidden="true"></i> &nbsp;Sales Itemwise Report                                        
-                                            </a>&nbsp;<i class="fa fa-question-circle-o bigfonts" aria-hidden="true" data-toggle="popover" data-trigger="focus" data-placement="top" title="Customer Outstanding Report."></i>
-                                        </td>
 
                                     </tr>
 

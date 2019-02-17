@@ -155,10 +155,6 @@ if(isset($_POST['exit']))
 													//$stockinuom	=$res['stockinuom'];
 													$lowstockalert	=$res['lowstockalert'];
 													$stockasofdate	=$res['stockasofdate'];
-													//krishnq
-													$ttype = 		$res['taxtype'];
-													$tname = 		$res['taxname'];
-													//krishn
 													//$usageunit 		=$res['usageunit'];
 													$handler 	=$res['handler'];
 													$description= $res['description'];
@@ -402,8 +398,8 @@ if(isset($_POST['exit']))
                                                     $sql = mysqli_query($dbcon, "SELECT id,taxtype,taxrate,taxname FROM taxmaster ");
                                                     while ($row = $sql->fetch_assoc()){	                                                        
 														 $taxrate=$row['taxrate'];
-														  $tname = $taxname=$row['taxname'];
-														  $ttype = $taxtype=$row['taxtype'];
+														  $taxname=$row['taxname'];
+														  $taxtype=$row['taxtype'];
 														  $taxid=$row['id'];
                                                         if($taxid==$taxidg){
                                                          echo '<option  selected data-name="'.$taxname.'" data-type="'.$taxtype.'" data-rate="'.$taxrate.'" value="'.$taxid.'" >'.$taxname.'</option>';						}else{
@@ -415,14 +411,13 @@ if(isset($_POST['exit']))
                                                     
                                                 </select>	
 												</div>
-									<!------------------------------------------------>
+                                         
                                     <div class="form-group" style="display:none;">
-                                        <input type="text" name="taxtype" id="taxtype"  value="<?php echo $ttype; ?>" class="form-control form-control-sm"  required placeholder="Price Per Qty" autocomplete="off" readonly>
+                                        <input type="text" name="taxtype" id="taxtype" class="form-control form-control-sm"  required placeholder="Price Per Qty" autocomplete="off" readonly>
                                     </div> 
                                     <div class="form-group" style="display:none;">
-                                        <input type="text" name="taxname" id="taxname" value="<?php echo $tname; ?>" class="form-control form-control-sm"  required placeholder="Price Per Qty" autocomplete="off" readonly>
+                                        <input type="text" name="taxname" id="taxname" class="form-control form-control-sm"  required placeholder="Price Per Qty" autocomplete="off" readonly>
                                     </div> 
-									<!------------------------------------------------>
                                         </div>
 											
 								
@@ -487,7 +482,7 @@ if(isset($_POST['exit']))
 									<input type="number" step="any" onkeypress="update_math_valsAdjStock();"   onkeyup="update_math_valsAdjStock();" id="adjstockinqty" name="adjstockinqty" class="form-control form-control-sm"   />
 									 </div>
 									 
-									  <script>
+									 <script>
 									 function update_math_valsAdjStock(){
 										  $('#stockinqty').val(<?php echo $stockinqty;?>);
 

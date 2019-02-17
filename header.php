@@ -316,13 +316,16 @@ if(isset($_SESSION['login_email'])){
 </td-->
                                         </tr>
 
-                                         <tr>
+                                        <tr>
+
                                             <td><a  href="listTaxMaster.php">
                                                 Set Taxes</a></td>
-                                            <!--td class="text-center"><a href="listWarehouse.php">Warehouse List</a></td>
-                                            <td class="text-center"><a  href="listCreditNotes.php">list Credit Notes</a></td>
-                                            <td class="text-right"></td-->
-                                            <td><a href="salesItemwiseReport.php">Sales Itewise Report</a></td>
+                                            <!--td class="text-center"><a href="listWarehouse.php">
+Warehouse List</a></td>
+<td class="text-center"><a  href="listCreditNotes.php">list Credit Notes</a></td>
+<td class="text-right"></td-->
+
+
                                         </tr>
                                         <tr>
 

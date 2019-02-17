@@ -732,8 +732,6 @@ $session_user = $rs['username'];
                 var dataRow = $("#tb tr:eq(1)").clone(true).appendTo("#tb");
             }
 
-            console.log(po_items_json[r].hsncode);
-            $('#tb tr').eq(r+1).find('#hsncode').val(po_items_json[r].hsncode);
             $('#tb tr').eq(r+1).find('#item_select').val(po_items_json[r].itemcode);
             $('#tb tr').eq(r+1).find('#price').val(po_items_json[r].rwprice);
             $('#tb tr').eq(r+1).find('#price').attr('data-price',po_items_json[r].tax_method==1?po_items_json[r].rwprice_org:po_items_json[r].rwprice);
@@ -826,6 +824,7 @@ $session_user = $rs['username'];
 
         }
 
+        console.log(po_items);
         var $form = $("#add_po_form");
         var data = getFormData($form);
         function getFormData($form){
