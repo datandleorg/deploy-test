@@ -1,0 +1,8 @@
+[25-Jul-2018 08:33:35 UTC] PHP Notice:  Undefined variable: return in /home/eschools/public_html/e-schoolz.in/books/workers/getters/get_itemdata.php on line 33
+[25-Jul-2018 08:43:55 UTC] PHP Notice:  Undefined variable: return in /home/eschools/public_html/e-schoolz.in/books/workers/getters/get_edit_data.php on line 29
+[25-Jul-2018 09:53:54 UTC] PHP Notice:  Undefined variable: return in /home/eschools/public_html/e-schoolz.in/books/workers/getters/get_select_options.php on line 50
+[26-Jul-2018 07:37:31 UTC] PHP Notice:  Undefined variable: return in /home/eschools/public_html/e-schoolz.in/books/workers/getters/get_items_view.php on line 62
+[18-Sep-2018 07:52:35 UTC] PHP Notice:  Undefined variable: return in /home/eschools/public_html/e-schoolz.in/dhiraj/workers/getters/get_itemdata.php on line 33
+[20-Oct-2018 10:57:52 UTC] PHP Notice:  Undefined variable: return in /home/eschools/public_html/e-schoolz.in/dhiraj/workers/getters/get_select_options.php on line 50
+[30-Oct-2018 05:26:41 UTC] PHP Notice:  Undefined variable: return in /home/eschools/public_html/e-schoolz.in/dhirajpro/workers/getters/get_edit_data.php on line 29
+[30-Oct-2018 07:04:56 UTC] PHP Notice:  Undefined variable: return in /home/eschools/public_html/e-schoolz.in/dhirajpro/workers/getters/get_select_options.php on line 50
