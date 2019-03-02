@@ -472,7 +472,6 @@
 
             if(page_action=="edit"){
                 var credits_data = Page.get_edit_vals(page_v_credits_id,"vendorcredits","v_credits_id");
-                console.log(credits_data);
                 $('#v_credits_suptype').val(credits_data.v_credits_suptype);
                 get_vendors(credits_data.v_credits_suptype);
                 $('#v_credits_vendorid').val(credits_data.v_credits_vendorid);
@@ -487,12 +486,10 @@
 
 
             if(page_action=="add"&&page_inv_code!=''){
-                console.log(page_inv_code);
                 var inv_data = Page.get_edit_vals(page_inv_code,"invoices","inv_code");
                 $('#creditnote_customer').val(inv_data.inv_customer);
                 $('#creditnote_cust_ref_no').val(inv_data.inv_code);
                 $('#creditnote_comp_code').val(inv_data.inv_comp_code);
-                console.log(inv_data);
                 $('#creditnote_billing_street').val(inv_data.inv_billing_street);
                 $('#creditnote_billing_city').val(inv_data.inv_billing_city);
                 $('#creditnote_billing_state').val(inv_data.inv_billing_state);

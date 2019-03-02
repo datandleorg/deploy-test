@@ -1,4 +1,5 @@
 <?php include('header.php'); ?>
+<?php include('workers/getters/functions.php'); ?>
 <!-- End Sidebar -->
 
 <div class="content-page">
@@ -59,14 +60,15 @@
                                         $result = mysqli_query($dbcon,$sql);
                                         if ($result->num_rows > 0){
                                             while ($row =$result-> fetch_assoc()){
-                                                $pprice = $row['itemcost'];
+                                               // print_r($row);
+                                                $pprice = $row['sales_taxmethod'] == 0 ? $row['itemcost'] : $row['itemcost']*(100/(100+$row['sales_taxrate']));
                                                 $pprice = $pprice==""?"NA":$pprice;
                                                 $pptax = $row['sales_taxrate'];
                                                 $pptax = $pptax==0?"NA":$pptax;
                                                 echo "<tr>";
                                                 echo '<td>' .$row['itemcode'] . '</td>';
                                                 echo '<td>'.$row['itemname'].' </td>';
-                                                echo '<td>'.$pprice.' </td>';
+                                                echo '<td>'.nf($pprice).' </td>';
                                                 echo '<td>'.$pptax.' </td>';
                                                 echo '<td>'.$row['sales_priceperqty'].' </td>';
                                                 echo '<td>'.$row['stockinqty'].' </td>';

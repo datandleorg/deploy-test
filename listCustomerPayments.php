@@ -40,7 +40,7 @@
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="example1" class="table table-bordered table-hover display">
+                                <table id="po_reports" class="table table-bordered table-hover display">
                                     <thead>
                                         <tr>
                                             <th style="display:none;">Id</th>												
@@ -57,8 +57,12 @@
                                     <tbody>
                                         <?php
                                         include("database/db_conection.php");//make connection here
-                                        $sql = "SELECT i.*,c.* FROM customer_payments i,customerprofile c where c.custid=i.cust_payment_customer
-										ORDER BY i.id DESC ";
+                                        $sql = "SELECT 'auto' as type,i.id as pid,i.*,c.* FROM customer_payments i ,customerprofile c where
+                                        c.custid=i.cust_payment_customer
+                                        UNION
+                                        SELECT 'manual' as type,iacc.id as pid,iacc.*,cacc.* FROM
+                                        customer_paymentsacc iacc,customerprofile cacc
+                                        where cacc.custid=iacc.cust_payment_customer ORDER BY pid DESC ";
                                         $result = mysqli_query($dbcon,$sql);
                                         if ($result->num_rows > 0){
                                             while ($row =$result-> fetch_assoc()){
@@ -72,14 +76,14 @@
                                                 echo '<td>'.$row['cust_payment_mode'].' </td>';
                                                 echo '<td>'.$row['cust_payment_amount'].' </td>';
 
-
+                                         
                                         ?>
 
 
                                         <?php
 
 
-                                                echo '<td><a class="btn btn-light btn-sm hidden-md" onclick="printContent(this);"  data-code="'.$row['cust_payment_id'].'"  data-id="po_print">
+                                                echo '<td><a class="btn btn-light btn-sm hidden-md" onclick="printContent(this);" data-type="'.$row['type'].'"  data-code="'.$row['cust_payment_id'].'"  data-id="po_print">
 														<i class="fa fa-print" aria-hidden="true"></i></a>
                                                       ';
                                                 //                                                <a href="addVendorPayments.php?payment_id=' . $row['payment_id'] . '&action=edit&type=payments" class="btn btn-primary btn-sm" data-target="#modal_edit_user_5">
@@ -103,6 +107,18 @@
                                         </script>
 
                                     </tbody>
+                                    <tfoot>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </tfoot>
                                 </table>
                             </div>
 
@@ -116,15 +132,44 @@
 
 
                 <script>
+
+var table = $('#po_reports').DataTable( {
+            lengthChange: false,
+            "footerCallback": function ( row, data, start, end, display ) {
+                var api = this.api(), data;
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+                };
+                var grossval = api
+                .column( 7 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 ).toFixed(2);
+
+
+                $( api.column( 5 ).footer() ).html('Total');
+                $( api.column( 6 ).footer() ).html(grossval);
+                //   $( api.column( 5 ).footer() ).html(taxamt);
+                //   $( api.column( 7 ).footer() ).html(netval);
+                //  $( api.column( 8 ).footer() ).html(bal);
+
+            }
+
+        });
                     $('#po_print').hide();
 
-                    function get_print_html(cust_payment_id,img){
+                    function get_print_html(cust_payment_id,img,type){
                         $.ajax ({
                             url: 'assets/customer_payment_print.php',
                             type: 'post',
                             async :false,
                             data: {
                                 cust_payment_id:cust_payment_id,
+                                type: type
                             },
                             //dataType: 'json',
                             success:function(response){
@@ -152,7 +197,8 @@
                         var id= $(el).attr('data-id');
                         var code= $(el).attr('data-code');
                         var img= $(el).attr('data-img');
-                        get_print_html(code,img);
+                        var type= $(el).attr('data-type');
+                        get_print_html(code,img,type);
 
                         window.onbeforeprint = beforePrint;
                         window.onafterprint = afterPrint;

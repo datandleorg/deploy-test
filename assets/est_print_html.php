@@ -32,7 +32,9 @@ function get_itemDetails($dbcon,$code){
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
 
-    return "[".$row['itemcode']."]  ".$row['itemname']."<br/> HSN : ".$row['hsncode'];
+    $ret = "[".$row['itemcode']."]  ".$row['itemname']."&nbsp;|&nbsp;HSN: ".$row['hsncode']."&nbsp;|&nbsp; ";
+    $ret.=  "GST@".($row['sales_taxrate']/1)."%";
+    return $ret;
 }
 function convertNumberToWord($num = false)
 {
@@ -198,25 +200,10 @@ function convertNumberToWord($num = false)
                                                 Total
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo nf(get_grandtotal($est_items_arr));?>
+                                                <?php echo nf(get_total_notax($est_items_arr));?>
                                             </td>
                                         </tr>
-                                        <?php
-                                        for($i=0;$i<count($est_items_arr);$i++){
-                                        ?>
-                                        <tr>
-                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
-                                                <?php echo get_taxtype($est_items_arr[$i]); ?>
-                                            </td>
-                                            <td style="text-align:center;padding:10px;">
-                                                <?php echo get_taxvals($est_items_arr[$i]);
-                                                ?>
-
-                                            </td>
-                                        </tr>
-                                        <?php
-                                        }
-                                        ?>
+                                        <?php echo get_taxtype($est_items_arr); ?>
                                     </tbody>
                                 </table>
                             </td>
@@ -232,8 +219,6 @@ function convertNumberToWord($num = false)
 
                                     </tbody>
                                 </table>
-
-
 
                             </td>
                             <td style="border:1px solid #000;padding:0px;">
@@ -292,7 +277,7 @@ function convertNumberToWord($num = false)
                                 <p><?php 
                                     $podiscount = $est_items_arr[0]->podiscount==""?0:$est_items_arr[0]->podiscount;
                                     $poadjustmentval = $est_items_arr[0]->poadjustmentval==""?0:$est_items_arr[0]->poadjustmentval;
-                                    $grdttl = (get_grandtotal($est_items_arr)-$podiscount)+($poadjustmentval);
+                                    $grdttl = (get_total($est_items_arr)-$podiscount)+($poadjustmentval);
                                     $whole = floor($grdttl);      // 1
                                     $fraction = ($grdttl - $whole)*100; 
                                     $paise = convertNumberToWord(round($fraction));

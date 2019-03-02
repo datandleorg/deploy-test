@@ -13,12 +13,9 @@ if (isset($_POST['array'])) {
     $return=array();
 
     if ($inv_code=="") {
-        $inv_code = get_id($dbcon,$table,"INV/00");
-        $inv_code .="/".$prefix;
+        $inv_code = get_id($dbcon,$table,"INV-0000");
+        $inv_code .="-".$prefix;
     }
-
-
-
 
     if($action=="add"){
         $sql2 = "INSERT INTO $table (inv_code) VALUES ('$inv_code')";
@@ -41,7 +38,7 @@ if (isset($_POST['array'])) {
                         $stockbeforeqty="";
                         $qr  = "select * from salesitemaster2 where id='".$items[$i]['itemcode']."' ;";
                         $exc = mysqli_query($dbcon,$qr)or die();
-                        while($r = mysqli_fetch_array($exc)){
+                        while($r = mysqli_fetch_array($exc)){   
                         $stockbeforeqty = $r['stockinqty'];
                         } 
                     // print_r($items[$i]);
@@ -68,7 +65,7 @@ if (isset($_POST['array'])) {
 
                         }
                         else{
-                            $return['status']=false;
+                        $return['status']=false;
                         $return['error']=mysqli_error($dbcon);
                         }
 

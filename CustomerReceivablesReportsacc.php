@@ -8,9 +8,9 @@ function gettaxamt_total($arr){
 
     for($i=0;$i<count($items);$i++){
         if($items[$i]['tax_method']==0){
-            $ttax+= $items[$i]['rwamt']*($items[$i]['tax_val']/100);
+            $ttax+= ($items[$i]['rwqty']*$items[$i]['rwprice'])*($items[$i]['tax_val']/100);
         }else{
-            $ttax+= ($items[$i]['rwqty']*$items[$i]['rwprice_org'])*($items[$i]['tax_val']/100);
+            $ttax+= ($items[$i]['rwqty']*$items[$i]['rwprice'])*($items[$i]['tax_val']/100);
         }
     }
 

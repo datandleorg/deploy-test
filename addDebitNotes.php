@@ -281,12 +281,14 @@
                                                 <option data-type="single" value="0" selected>Open Taxrate</option>
                                                 <?php 
 
-                                                $sql = mysqli_query($dbcon, "SELECT taxname,taxrate,taxtype FROM taxmaster ");
+                                                $sql = mysqli_query($dbcon, "SELECT id,taxname,taxrate,taxtype FROM taxmaster ");
                                                 while ($row = $sql->fetch_assoc()){	
                                                     $taxname=$row['taxname'];
                                                     $taxrate=$row['taxrate'];
                                                     $taxtype=$row['taxtype'];
-                                                    echo '<option data-type="'.$taxtype.'" value="'.$taxrate.'" >'.$taxname.'</option>';
+                                                    echo $taxid=$row['id'];
+
+                                                    echo '<option data-type="'.$taxtype.'" data-rate="'.$taxrate.'" value="'.$taxid.'" >'.$taxname.'</option>';
                                                 }
                                                 ?>
                                             </select></td>
@@ -465,7 +467,6 @@
 
             if(page_action=="add"&&page_grn_id!=''){
                 var inv_data = Page.get_edit_vals(page_grn_id,"grn_notes","grn_id");
-                console.log(inv_data);
                 $('#debitnote_vendor').val(inv_data.grn_po_vendor);
                 $('#debitnote_vendor_ref_no').val(inv_data.grn_invoice_no);
                 $('#debitnote_comp_code').val(inv_data.grn_comp_code);
@@ -480,7 +481,6 @@
                 $('#debitnote_billing_phone').val(vendor_data.mobile);
                 $('#debitnote_billing_gstin').val(vendor_data.gstin); 
 
-                console.log(JSON.parse(inv_data.grn_po_items));
                 set_math_vals(JSON.parse(inv_data.grn_po_items));
 
             }
@@ -533,7 +533,6 @@
 
         function post_address(vendorid){
             var vals = Page.get_edit_vals(vendorid,"vendorprofile","vendorid");
-            console.log(vals);
             $('#debitnote_billing_street').val(vals.address);
             $('#debitnote_billing_city').val(vals.city);
             $('#debitnote_billing_state').val(vals.state);
@@ -559,12 +558,14 @@
                 if(r<itemrowCount-1){
                     var dataRow = $("#tb tr:eq(1)").clone(true).appendTo("#tb");
                 }
+
+                console.log(inv_items_json[r].tax_id);
                 $('#tb tr').eq(r+1).find('#item_select').val(inv_items_json[r].itemcode);
                 $('#tb tr').eq(r+1).find('#hsncode').val(inv_items_json[r].hsncode);
                 $('#tb tr').eq(r+1).find('#price').val(inv_items_json[r].rwprice);
                 $('#tb tr').eq(r+1).find('#price').attr('data-price',inv_items_json[r].tax_method==1?inv_items_json[r].rwprice_org:inv_items_json[r].rwprice);
                 $('#tb tr').eq(r+1).find('#qty').val(inv_items_json[r].rwqty);
-                $('#tb tr').eq(r+1).find('#taxname').val(inv_items_json[r].tax_val);
+                $('#tb tr').eq(r+1).find('#taxname').val(inv_items_json[r].tax_id);
                 $('#tb tr').eq(r+1).find('#taxname').attr('data-taxmethod',inv_items_json[r].tax_method);
                 $('#tb tr').eq(r+1).find('#uom').val(inv_items_json[r].uom);
                 totalamt+=$('#tb tr').eq(r+1).find('#price').val()*$('#tb tr').eq(r+1).find('#qty').val();

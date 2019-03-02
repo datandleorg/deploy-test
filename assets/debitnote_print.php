@@ -32,7 +32,9 @@ function get_itemDetails($dbcon,$code){
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
 
-    return "[".$row['itemcode']."]  ".$row['itemname']."<br/> HSN : ".$row['hsncode'];
+    $ret = "[".$row['itemcode']."]  ".$row['itemname']."<br/> HSN : ".$row['hsncode']."<br/>";
+    $ret.=  "GST @ ".($row['taxrate']/1)."%";
+    return $ret;
 }
 function convertNumberToWord($num = false)
 {
@@ -196,25 +198,11 @@ function convertNumberToWord($num = false)
                                                 Total
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo nf(get_grandtotal($inv_items_arr));?>
+                                                <?php echo nf(get_total_notax($inv_items_arr));?>
                                             </td>
                                         </tr>
-                                        <?php
-                                        for($i=0;$i<count($inv_items_arr);$i++){
-                                        ?>
-                                        <tr>
-                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
-                                                <?php echo get_taxtype($inv_items_arr[$i]); ?>
-                                            </td>
-                                            <td style="text-align:center;padding:10px;">
-                                                <?php echo get_taxvals($inv_items_arr[$i]);
-                                                ?>
+                                        <?php echo get_taxtype($inv_items_arr); ?>
 
-                                            </td>
-                                        </tr>
-                                        <?php
-                                        }
-                                        ?>
                                     </tbody>
                                 </table>
                             </td>

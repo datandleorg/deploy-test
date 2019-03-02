@@ -18,7 +18,9 @@ function get_itemDetails($dbcon,$code){
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
 
-    return "[".$row['itemcode']."]  ".$row['itemname']."<br/> HSN : ".$row['hsncode'];
+    $ret = "[".$row['itemcode']."]  ".$row['itemname']."<br/> HSN : ".$row['hsncode']."<br/>";
+    $ret.=  "GST @ ".($row['sales_taxrate']/1)."%";
+    return $ret;
 }
 
 
@@ -63,6 +65,16 @@ function get_itemDetails($dbcon,$code){
                                 </td> 
                             </tr>    
 
+                            <tr>  
+                            <td style="border-bottom:1px solid #000;padding:5px;">
+                            <b>Payment Term: </b><?php echo $row['inv_payterm']>1?$row['inv_payterm'].' Day(s)':"Advance"; ?>
+                                </td> 
+                            </tr>    
+                            <td style="padding:5px;">
+                            <b>Due Date: </b><?php echo $row['inv_payterm']>1? Date('d/m/Y', strtotime("+".$row['inv_payterm']." days")) : date("d/m/Y")  ?>
+                                </td> 
+                            </tr>    
+                            
                         </table>
 
                     </td>
@@ -165,30 +177,19 @@ function get_itemDetails($dbcon,$code){
                             <td style="border:1px solid #000;width:60%;">
                                 <table width="100%" >
                                     <tbody>
-                                        <tr>
+                                    <tr>
                                             <td width="61%" style="text-align:center;border-bottom:1px solid #000;padding:10px;">
-                                                Total
+                                                <b>Total</b>
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo get_grandtotal($grn_po_items_arr);?>
-                                            </td>
-                                        </tr>
-                                        <?php
-                                        for($i=0;$i<count($grn_po_items_arr);$i++){
-                                        ?>
-                                        <tr>
-                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
-                                                <?php echo get_taxtype($grn_po_items_arr[$i]); ?>
-                                            </td>
-                                            <td style="text-align:center;padding:10px;">
-                                                <?php echo get_taxvals($grn_po_items_arr[$i]);
+                                                <?php 
+                                                echo  get_total_notax($grn_po_items_arr);
                                                 ?>
-
                                             </td>
                                         </tr>
-                                        <?php
-                                        }
-                                        ?>
+                                        <?php 
+                                        echo get_taxtype($grn_po_items_arr);?>
+
                                     </tbody>
                                 </table>
                             </td>

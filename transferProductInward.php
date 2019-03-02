@@ -255,11 +255,11 @@
 
                                     <div class="form-row">
                                         <div class="form-group text-right m-b-10">
-                                            &nbsp;<button class="btn btn-primary" name="submit" type="submit">
+                                            &nbsp;<button class="btn btn-primary" name="submit" type="submit" onclick="location.href='listtransferProductInward.php'">
                                             Submit
                                             </button>
-                                            <button type="reset" name="cancel" class="btn btn-secondary m-l-5">
-                                                Cancel
+                                            <button type="reset" name="cancel" class="btn btn-secondary m-l-5" onclick="redirectTo()">
+                                             Cancel
                                             </button>
                                         </div>
                                     </div>
@@ -284,6 +284,7 @@
         <?php include('footer.php');?>
 
         <script>
+        
             var error="";
             var stop="";
 
@@ -299,13 +300,15 @@
                     $('#stk_mov_owner').val(stk_mov_data.stk_mov_owner);
                     $('#stk_mov_req_date').val(stk_mov_data.stk_mov_req_date);
                     $('#stk_mov_location').val(stk_mov_data.stk_mov_location);
-                    $('#stk_mov_category').val(stk_mov_data.stk_mov_category);               $('#stk_mov_docref').val(stk_mov_data.stk_mov_docref);
+                    $('#stk_mov_category').val(stk_mov_data.stk_mov_category);
+                    $('#stk_mov_docref').val(stk_mov_data.stk_mov_docref);
                     $('#stk_mov_status').val(stk_mov_data.stk_mov_status);
                     $('#stk_mov_notes').val(stk_mov_data.stk_mov_notes);               
                     set_math_vals(JSON.parse(stk_mov_data.stk_mov_items));
                 }
 
             });      
+
 
             function set_itemrow(ele,type){
                 var itemcodeId = $(ele).val();

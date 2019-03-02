@@ -2,21 +2,6 @@
 include('header.php');
 include('workers/getters/functions.php');
 
-function gettaxamt_total($arr){
-    $ttax=0;
-    $items = json_decode($arr, true);
-
-    for($i=0;$i<count($items);$i++){
-        if($items[$i]['tax_method']==0){
-            $ttax+= $items[$i]['rwamt']*($items[$i]['tax_val']/100);
-        }else{
-            $ttax+= ($items[$i]['rwqty']*$items[$i]['rwprice_org'])*($items[$i]['tax_val']/100);
-        }
-    }
-
-    return $ttax;
-
-}
 ?>
 
 <div class="content-page">
@@ -94,6 +79,7 @@ function gettaxamt_total($arr){
                                                 <th>Customer</th>
                                                 <th>Tax</th>
                                                 <th>Total</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -106,7 +92,7 @@ function gettaxamt_total($arr){
                                                 $end = date('Y-m-d', $timestamp);
                                                 $custwise = $_GET['custwise'];
 
-                                                $sql = "SELECT * from customer_payments cp,customerprofile c,invoices i where 1=1 ";
+                                             echo   $sql = "SELECT * from customer_payments cp,customerprofile c,invoices i where 1=1 ";
                                                 if($_GET['st']!=''){
                                                     if($st==$end){
                                                         $sql.= " and cp.cust_payment_date='$st' ";   
@@ -129,13 +115,20 @@ function gettaxamt_total($arr){
                                             $result = mysqli_query($dbcon,$sql);
                                             if ($result->num_rows > 0){
                                                 while ($row =$result-> fetch_assoc()){
+                                                    $inv_items_arr = json_decode($row['inv_items']);
+
                                                     echo '                           <tr>
                                                 <td>'.$row['cust_payment_id'].'</td>
                                                 <td>'.$row['cust_payment_invoice_no'].'</td>
                                                 <td>'.$row['cust_payment_date'].'</td>
                                                 <td>'.$row['custname'].'</td>
-                                                <td>'.nf(gettaxamt_total($row['inv_items'])).'</td>
+                                                <td>'.nf((get_total($inv_items_arr))-nf(get_total_notax($inv_items_arr))).'</td>
                                                 <td>'.nf($row['cust_payment_amount']).'</td>
+                                                <td><a class="btn btn-light btn-sm hidden-md" 
+                                                onclick="printContent(this);"  
+                                                data-code="'.$row['cust_payment_id'].'"
+                                                  data-id="po_print">
+                                                <i class="fa fa-print" aria-hidden="true"></i></a></td>
                                             </tr>';  
                                                 }
                                             }
@@ -151,6 +144,7 @@ function gettaxamt_total($arr){
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
+                                                <th></th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -160,7 +154,10 @@ function gettaxamt_total($arr){
 
                         </div>
                     </div><!-- end card-->
+                    <div id="po_print" style="display:;">
 
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -242,9 +239,19 @@ function gettaxamt_total($arr){
                     return intVal(a) + intVal(b);
                 }, 0 ).toFixed(2);
 
+                var taxgrossval = api
+                .column( 4 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 ).toFixed(2);
+
+
+
 
                 $( api.column( 0 ).footer() ).html('Total');
                 $( api.column( 5 ).footer() ).html(grossval);
+                $( api.column( 4 ).footer() ).html(taxgrossval);
                 //   $( api.column( 5 ).footer() ).html(taxamt);
                 //   $( api.column( 7 ).footer() ).html(netval);
                 //  $( api.column( 8 ).footer() ).html(bal);
@@ -316,6 +323,56 @@ function gettaxamt_total($arr){
         $('#daterange').attr('readonly',true); 
         $("#reset-date").show();
     }
+
+    $('#po_print').hide();
+
+function get_print_html(cust_payment_id,img){
+    $.ajax ({
+        url: 'assets/customer_payment_print.php',
+        type: 'post',
+        async :false,
+        data: {
+            cust_payment_id:cust_payment_id,
+            type: 'auto'
+        },
+        //dataType: 'json',
+        success:function(response){
+            if(response!=0 || response!=""){
+                $('#po_print').html(response);
+                $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
+            }else{
+                alert('Something went wrong');
+            }
+        }
+
+    });
+}
+var beforePrint = function () {
+    $('#po_print').show();
+};
+
+var afterPrint = function () {
+    location.reload();
+
+    $('#po_print').hide();
+};
+
+function printContent(el){
+    var id= $(el).attr('data-id');
+    var code= $(el).attr('data-code');
+    var img= $(el).attr('data-img');
+    get_print_html(code,img);
+
+    window.onbeforeprint = beforePrint;
+    window.onafterprint = afterPrint;
+    var restorepage = $('body').html();
+    var printcontent = $('#' + id).clone();
+    $('body').empty().html(printcontent);
+    window.print();
+    $('body').html(restorepage);
+
+}
+
 </script>
 <?php
 include('footer.php');

@@ -451,7 +451,6 @@ $gstin 	 =	$_POST['gstin'];
 <script>
                 function onctype(){
 
-                    console.log(this);
                 }
             </script>
 <!-- END Java Script for this page -->

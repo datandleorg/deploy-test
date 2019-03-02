@@ -30,7 +30,7 @@ if (isset($_POST['array'])) {
 
             $inv_val_arr = findbyand($dbcon,$cust_payment_inv_id,"invoicesacc","inv_code");
             // print_r($grn_val_arr);
-            $balance = $inv_val_arr['values'][0]['inv_balance_amt']-$cust_payment_amount;
+           echo  $balance = $inv_val_arr['values'][0]['inv_balance_amt']-$cust_payment_amount;
             $return = updatebyand($dbcon,$balance,"invoicesacc","inv_balance_amt","inv_code",$cust_payment_inv_id);
             //update_open_balance($dbcon,'recievables');
 

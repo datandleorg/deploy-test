@@ -186,7 +186,7 @@ if(isset($_SESSION['login_email'])){
                                                             <i class="fa fa-plus bigfonts" aria-hidden="true">&nbsp;Cash Memo/Retail Invoice</i></a></td>
                                                         <td class="text-left"><a href="listtransferProductInward.php">
                                                             <i class="fa fa-plus bigfonts" aria-hidden="true">&nbsp;Stock Transfers(Inward to Locations)</i></a></td>
-                                                        <td class="text-right"><a  href="addExpenses.php">
+                                                        <td class="text-right"><a  href="listofrecordExpenses.php">
                                                             <i class="fa fa-plus bigfonts" aria-hidden="true">&nbsp;Record Expenses</i></a></td>
 
 
@@ -316,16 +316,13 @@ if(isset($_SESSION['login_email'])){
 </td-->
                                         </tr>
 
-                                        <tr>
-
+                                         <tr>
                                             <td><a  href="listTaxMaster.php">
                                                 Set Taxes</a></td>
-                                            <!--td class="text-center"><a href="listWarehouse.php">
-Warehouse List</a></td>
-<td class="text-center"><a  href="listCreditNotes.php">list Credit Notes</a></td>
-<td class="text-right"></td-->
-
-
+                                            <!--td class="text-center"><a href="listWarehouse.php">Warehouse List</a></td>
+                                            <td class="text-center"><a  href="listCreditNotes.php">list Credit Notes</a></td>
+                                            <td class="text-right"></td-->
+                                            <td><a href="salesItemwiseReport.php">Sales Itewise Report</a></td>
                                         </tr>
                                         <tr>
 
@@ -669,7 +666,7 @@ View All
                                 <a href="#"><i class="fa fa-rupee bigfonts" aria-hidden="true"></i><span>Expenses</span><span class="menu-arrow"></span></a>
                                 <ul class="list-unstyled">								
                                     <li><a href="listExpenses.php"><i class="fa fa-circle-o"></i>list Expenses</a></li>								
-                                    <li><a href="addExpenses.php"><i class="fa fa-plus-circle"></i>add Expense</a></li>								
+                                    <li><a href="recordExpenses.php"><i class="fa fa-plus-circle"></i>add Expense</a></li>								
                                     <!--li><a href=""><i class="fa fa-circle-o"></i>list Accounts</a></li-->
                                 </ul>
                             </li>		

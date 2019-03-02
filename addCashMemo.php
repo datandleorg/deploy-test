@@ -217,12 +217,13 @@ include('header.php');
                                             <option data-type="single" value="0" selected>Open Taxrate</option>
                                             <?php 
 
-                                            $sql = mysqli_query($dbcon, "SELECT taxname,taxrate,taxtype FROM taxmaster ");
+                                            $sql = mysqli_query($dbcon, "SELECT id,taxname,taxrate,taxtype FROM taxmaster ");
                                             while ($row = $sql->fetch_assoc()){	
                                                 $taxname=$row['taxname'];
                                                 $taxrate=$row['taxrate'];
                                                 $taxtype=$row['taxtype'];
-                                                echo '<option data-type="'.$taxtype.'" value="'.$taxrate.'" >'.$taxname.'</option>';
+                                                $taxid=$row['id'];
+                                                echo '<option data-type="'.$taxtype.'"  data-rate="'.$taxrate.'" value="'.$taxid.'" >'.$taxname.'</option>';
                                             }
                                             ?>
                                             </select></td>
@@ -526,7 +527,7 @@ include('header.php');
 
             }
 
-            rowitem.update_math_vals();
+            sales_rowitem.update_math_vals();
         }
 
         function chgdiscount_tupe(x){
@@ -546,6 +547,11 @@ include('header.php');
         $("form#add_cashmem_form").submit(function(e){
             e.preventDefault();
 
+            var r = confirm("Are you sure you want to save Invoice, once saved you cannot edit");
+            if (!r) {
+                return false;
+            }
+
             var rowCount = $('#tb tr').length;
             var inv_items = [];
 
@@ -554,9 +560,10 @@ include('header.php');
                 var item_details = $('#tb tr').eq(i).find('#item_select option:selected').text();
                 var hsncode = $('#tb tr').eq(i).find('#hsncode').val();
                 var rwqty = $('#tb tr').eq(i).find('#qty').val();
-                var tax_val = $('#tb tr').eq(i).find('#taxname').val();
+                var tax_id = $('#tb tr').eq(i).find('#taxname').val();
                 var tax_method = $('#tb tr').eq(i).find('#taxname').attr('data-taxmethod');
                 var tax_type = $('#tb tr').eq(i).find('#taxname option:selected').attr('data-type');
+                var tax_val = $('#tb tr').eq(i).find('#taxname option:selected').attr('data-rate');
                 var rwprice_org = $('#tb tr').eq(i).find('#price').attr('data-price');
                 var rwprice = $('#tb tr').eq(i).find('#price').val();
                 var rwamt = $('#tb tr').eq(i).find('#amount').val();
@@ -583,6 +590,8 @@ include('header.php');
                     hsncode : hsncode,
                     rwqty : rwqty,
                     tax_val : tax_val,
+                    tax_type : tax_type,
+                    tax_id : tax_id,
                     tax_method : tax_method,
                     rwprice : rwprice,
                     rwprice_org : rwprice_org,
@@ -672,7 +681,7 @@ include('header.php');
                     },
                     dataType: 'json',
                     success:function(response){
-                        location.href="listInvoices.php";
+                    //   location.href="listInvoices.php";
 
                     }
                 });

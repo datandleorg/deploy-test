@@ -97,6 +97,13 @@ include('header.php');
                                     </div>
                                 </div> -->
 
+                                <div class="form-row" id="inv_code_row" style="display:none;">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputState">Invoice No#</label>
+                                        <input type="text" placeholder="Invoice No" name="inv_code" id="inv_code" class="form-control form-control-sm"> 
+                                    </div>
+                                </div>
+                                
                                 <div class="form-row">
                                     <div class="form-group col-md-4">									
                                         <label><span class="text-danger">Invoice Date*</span></label>
@@ -108,6 +115,14 @@ include('header.php');
                                         <input type="date" class="form-control form-control-sm" id="inv_duedate" name="inv_duedate" value="<?php echo date("Y-m-d");?>" required autocomplete="off">
                                     </div>
                                 </div>
+
+                                <div class="form-row" id="inv_code_row" style="display:none;">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputState">Invoice No#</label>
+                                        <input type="text" placeholder="Invoice No" name="inv_code" id="inv_code" class="form-control form-control-sm"> 
+                                    </div>
+                                </div>
+
 
                                 <div class="form-row">                                
                                     <div class="form-group col-md-4">											
@@ -441,7 +456,7 @@ include('header.php');
                                             &nbsp;&nbsp;&nbsp;&nbsp; <button class="btn btn-primary" type="submit" >
                                             Submit
                                             </button>
-                                            <button type="reset" name="cancel" class="btn btn-secondary m-l-5">
+                                            <button type="reset" name="cancel" class="btn btn-secondary m-l-5" onclick="window.history.back();">
                                                 Cancel
                                             </button>
                                         </div>
@@ -626,6 +641,9 @@ include('header.php');
                 if(page_inv_code!=""&&page_action=="edit"){
                     var edit_data = Page.get_edit_vals(page_inv_code,page_table,"inv_code");
                     set_form_data(edit_data);
+                    $('#inv_code_row').show();
+                    console.log(edit_data);
+                    $('#inv_code_row #inv_code').val(edit_data.inv_code);
                 }else if(page_so_code!=""&&page_action=="add"){
                     var edit_data2 = Page.get_edit_vals(page_so_code,"salesorders","so_code");
                     //$('#inv_so_code').val(edit_data2.so_code);
@@ -820,7 +838,7 @@ include('header.php');
                 var indexed_array = {};
 
                 $.map(unindexed_array, function(n, i){
-                    if(n['name']=="itemcode"||n['name']=="hsncode"||n['name']=="qty"||n['name']=="unit"||n['name']=="price"||n['name']=="amount"||n['name']=="taxname"||n['name']=="uom"){
+                    if(n['name']=="itemcode"||n['name']=="hsncode"||n['name']=="inv_code"||n['name']=="qty"||n['name']=="unit"||n['name']=="price"||n['name']=="amount"||n['name']=="taxname"||n['name']=="uom"){
 
                     }else{
                         indexed_array[n['name']] = n['value'];
@@ -846,6 +864,24 @@ include('header.php');
             //  console.log(mm+""+yy.slice(-2)) 
             var dateValue = mm+""+yy
 
+
+            var newinvcode_val = $('#inv_code_row #inv_code').val();
+            var inv_code_changed = "";
+            var inv_action = "";
+            if(page_action=='edit'){
+                if(newinvcode_val!=page_inv_code){
+                inv_code_changed = newinvcode_val;
+                inv_action = 'add';
+                }else{
+                    inv_code_changed = page_inv_code;
+                    inv_action = 'edit';
+                }
+
+            }else{
+                inv_action = "add";
+            }
+
+
             if (sales_rowitem.sales_entry){
 
                 $.ajax ({
@@ -853,15 +889,16 @@ include('header.php');
                     type: 'post',
                     data: {
                          array : JSON.stringify(data),
-                         inv_code:page_inv_code,
-                         action:page_action?page_action:"add",table:"invoicesacc",
+                         inv_code    : inv_code_changed,
+                        action  :   inv_action,
+                         table:"invoicesacc",
                          prefix:dateValue,
                          changed_row_qty     : changed_row_qty,
                          changed_item_select : JSON.stringify(changed_item_select)
                         },
                     dataType: 'json',
                     success:function(response){
-                        location.href="listInvoicesacc.php";
+                       location.href="listInvoicesacc.php";
                     }
 
 

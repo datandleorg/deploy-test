@@ -18,10 +18,10 @@ function get_itemDetails($dbcon,$code){
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
 
-    return "[".$row['itemcode']."]  ".$row['itemname']."<br/> HSN : ".$row['hsncode'];
+    return "[".$row['itemcode']."]  ".$row['itemname']."&nbsp;|&nbsp; HSN : ".$row['hsncode'];
 }
 
-function get_total($items_arr){
+function get_totalval($items_arr){
     $amt = 0;
     for($i=0;$i<count($items_arr);$i++){
         $amt = $amt + ($items_arr[$i]->rwqty*$items_arr[$i]->rwprice);
@@ -30,17 +30,6 @@ function get_total($items_arr){
     return $amt;
 }
 
-function get_grandtotal($po_items_arr){
-    $grand_amt = 0;
-    for($i=0;$i<count($po_items_arr);$i++){
-        $amt = $po_items_arr[$i]->rwamt;
-        $tax = gettaxamt_print($po_items_arr[$i]);
-        $total = $amt+$tax;
-        $grand_amt = $grand_amt +$total;
-    }
-
-    return $grand_amt;
-}
 ?> 
 
 <html>
@@ -139,25 +128,11 @@ function get_grandtotal($po_items_arr){
                                                 Total
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo nf(get_total($stk_mov_items_arr));?>
+                                                <?php echo nf(get_total_notax($stk_mov_items_arr));?>
                                             </td>
                                         </tr>
-                                        <?php
-                                        for($i=0;$i<count($stk_mov_items_arr);$i++){
-                                        ?>
-                                        <tr>
-                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
-                                                <?php echo get_taxtype($stk_mov_items_arr[$i]); ?>
-                                            </td>
-                                            <td style="text-align:center;padding:10px;">
-                                                <?php echo get_taxvals($stk_mov_items_arr[$i]);
-                                                ?>
+                                        <?php echo get_taxtype($stk_mov_items_arr); ?>
 
-                                            </td>
-                                        </tr>
-                                        <?php
-                                        }
-                                        ?>
                                     </tbody>
                                 </table>
                             </td>
@@ -178,7 +153,7 @@ function get_grandtotal($po_items_arr){
                                                 Sub Total
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo nf(get_grandtotal($stk_mov_items_arr));?>
+                                                <?php echo nf(get_total($stk_mov_items_arr));?>
                                             </td>
                                         </tr>
 
@@ -188,7 +163,7 @@ function get_grandtotal($po_items_arr){
                                             </td>
 
                                             <td style="text-align:center;border-bottom:1px solid #000;padding:10px;"> 
-                                                <?php echo nf(get_grandtotal($stk_mov_items_arr)); ?>
+                                                <?php echo nf(get_total($stk_mov_items_arr)); ?>
                                             </td>
                                         </tr>
 

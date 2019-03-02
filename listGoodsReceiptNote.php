@@ -211,8 +211,8 @@ include('header.php');
                             //dataType: 'json',
                             success:function(response){
                                 if(response!=0 || response!=""){
-                                    $('#po_print').html(response);
-                                    $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
+                                    $('#po_print').prepend('<img src="http://localhost/projects/dhiraj/original/dhirajtrial/assets/images/logo.png" width="50px" height="50px"/>');
+                                    $('#po_print').append(response);
 
                                 }else{
                                     alert('Something went wrong');

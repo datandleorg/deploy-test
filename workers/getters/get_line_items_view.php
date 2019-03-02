@@ -4,19 +4,27 @@
 include_once('../../database/db_conection.php');
 include('functions.php');
 
-if (isset($_GET['id'])) {
+
+if (isset($_GET['id'])&&isset($_GET['type'])) {
 
     $id = $_GET['id'];
+    $type = $_GET['type'];
 
     $return=array();
     $values=array();
-    $sql = "SELECT * FROM grn_notes where  grn_id='$id' LIMIT 1;";
+    if($type=="grn"){
+        $sql = "SELECT * FROM grn_notes where  grn_id='$id' LIMIT 1;";
+
+    }else{
+        $sql = "SELECT * FROM invoices where  inv_code='$id' LIMIT 1;";
+
+    }
     $result = mysqli_query($dbcon, $sql);
     $values = sql_fetch_all($result);
 
     if (mysqli_num_rows($result) > 0) {
 
-        $items = json_decode($values[0]['grn_po_items'], true);
+        $items = $type =="grn" ? json_decode($values[0]['grn_po_items'], true) : json_decode($values[0]['inv_items'],true);
         $list = "";
         $list.= '
         <table class="table">
@@ -44,9 +52,9 @@ if (isset($_GET['id'])) {
                 <td>'.$items[$i]['rwprice'].'</td>
                 <td>'.$items[$i]['rwqty'].'</td>
                 <td>'.nf($items[$i]['rwqty']*$items[$i]['rwprice']).'</td>
-                <td>'.get_taxtype($object).'</td>
-                <td>'.nf(get_taxvals($object)).'</td>
-                <td>'.nf($total).'</td>
+                <td>'.$items[$i]['tax_val'].'</td>
+                <td>'.gettaxamt_print   ($object).'</td>
+                <td>'.(gettaxamt_print($object)+(nf($items[$i]['rwqty']*$items[$i]['rwprice']))).'</td>
                 </tr>'; 
             $gdtotal+=$total;
 

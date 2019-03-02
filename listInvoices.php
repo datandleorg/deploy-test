@@ -37,7 +37,7 @@
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="example1" class="table table-bordered table-hover display">
+                                <table id="listinvoicestable" class="table table-bordered table-hover display">
                                     <thead>
                                         <tr>
                                             <th style="display:none;">Id#</th>												
@@ -220,6 +220,9 @@
                 <script>
                     $('#po_print').hide();
 
+                    var table = $('#listinvoicestable').DataTable();
+                    table.order( [ 5, 'desc' ] ).draw();
+                        
                     function get_print_html(inv_code,img,template){
                         $.ajax ({
                             url: 'assets/'+template+'.php',

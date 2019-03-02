@@ -192,7 +192,7 @@ function convertNumberToWord($num = false)
                                                 Total
                                             </td>
                                             <td style="text-align:right;padding:10px;padding-right:50px;"> 
-                                                <?php echo nf(get_grandtotal($inv_items_arr));?>
+                                                <?php echo nf(get_grandAmttotal($inv_items_arr));?>
                                             </td>
                                         </tr>
                              

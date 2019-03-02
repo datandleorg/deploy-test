@@ -3,22 +3,6 @@ include('header.php');
 include('workers/getters/functions.php');
 include('generic_modal.php');
 
-function gettaxamt_total($arr){
-    $ttax=0;
-    $items = json_decode($arr, true);
-
-    for($i=0;$i<count($items);$i++){
-        if($items[$i]['tax_method']==0){
-            $ttax+= $items[$i]['rwamt']*($items[$i]['tax_val']/100);
-        }else{
-            $ttax+= ($items[$i]['rwqty']*$items[$i]['rwprice_org'])*($items[$i]['tax_val']/100);
-        }
-    }
-
-    return $ttax;
-
-}
-
 function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
     $curdate=strtotime($newdate);
     $mydate=strtotime('+'.$po_payterm.' day', strtotime($grn_date));
@@ -158,18 +142,22 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                             $result = mysqli_query($dbcon,$sql);
                                             if ($result->num_rows > 0){
                                                 while ($row =$result-> fetch_assoc()){
-                                                    echo '                           <tr>
+                                                    $grn_po_items_arr = json_decode($row['grn_po_items']);
+                                                    echo ' <tr>
                                                 <td>'.$row['grn_id'].'</td>
                                                 <td>'.$row['grn_po_code'].'</td>
                                                 <td>'.$row['grn_invoice_no'].'</td>
                                                 <td>'.$row['grn_date'].'</td>
                                                 <td>'.$row['supname'].'</td>
-                                                <td>'.nf(($row['grn_po_value']-gettaxamt_total($row['grn_po_items']))).'</td>
-                                                <td>'.nf(gettaxamt_total($row['grn_po_items'])).'</td>
-                                                <td>'.nf($row['grn_po_value']).'</td>
-                                                <td>'.nf($row['grn_balance']-$row['grn_po_value']).'</td>
+                                                <td>'.nf(get_total_notax($grn_po_items_arr)).'</td>
+                                                <td>'.nf((get_total($grn_po_items_arr))-nf(get_total_notax($grn_po_items_arr))).'</td>
+                                                <td>'.nf(get_total($grn_po_items_arr)).'</td>
+                                                <td>'.nf((get_total($grn_po_items_arr))-$row['grn_balance']).'</td>
                                                 <td>'.nf($row['grn_balance']).'</td>
-                                                <td><button onclick="show_line_items(this);" data-id="'.$row['grn_id'].'" type="button" class="btn"><i class="fa fa-list"></i></button></td>
+                                                <td> <a class="btn btn-default" onclick="printContent(this);" 
+                                                 data-img="assets/images/dhirajLogo.png" data-id="po_print" data-code="'.$row['grn_id'].'">
+                                                 <i class="fa fa-print" 
+                                                 aria-hidden="true"></i></a></td>
                                             </tr>';  
                                                 }
                                             }
@@ -189,6 +177,7 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
+                                                <th></th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -198,7 +187,8 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
 
                         </div>
                     </div><!-- end card-->
-
+                    <div id="po_print" style="display:;">
+</div>
                 </div>
             </div>
         </div>
@@ -218,7 +208,7 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
     var page_pstatuswise = "<?php if(isset($_GET['pstatuswise'])){ echo $_GET['pstatuswise']; } ?>";
 
     function show_line_items(x){
-        var grn_l_id = $(x).attr('data-id');
+        var grn_l_id = encodeURI($(x).attr('data-id'));
 
         $.ajax ({
             url: 'workers/getters/get_line_items_view.php?id='+grn_l_id,
@@ -414,6 +404,58 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
         $('#daterange').attr('readonly',true); 
         $("#reset-date").show();
     }
+
+    
+    $('#po_print').hide();
+
+function get_print_html(grn_id,img){
+    $.ajax ({
+        url: 'assets/grn_print_html.php',
+        type: 'post',
+        async :false,
+        data: {
+            grn_id:grn_id
+        },
+        //dataType: 'json',
+        success:function(response){
+            if(response!=0 || response!=""){
+                $('#po_print').html(response);
+                $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
+
+            }else{
+                alert('Something went wrong');
+            }
+        }
+
+    });
+}
+var beforePrint = function () {
+    $('#po_print').show();
+};
+
+var afterPrint = function () {
+    location.reload();
+
+    $('#po_print').hide();
+};
+
+function printContent(el){
+    var id= $(el).attr('data-id');
+    var code= $(el).attr('data-code');
+    var img= $(el).attr('data-img');
+    get_print_html(code,img);
+
+    window.onbeforeprint = beforePrint;
+    window.onafterprint = afterPrint;
+    var restorepage = $('body').html();
+    var printcontent = $('#' + id).clone();
+    $('body').empty().html(printcontent);
+    window.print();
+    $('body').html(restorepage);
+
+}
+
+
 </script>
 <?php
 include('footer.php');

@@ -1,21 +1,6 @@
 <?php
 include('header.php');
-
-function gettaxamt_total($arr){
-    $ttax=0;
-    $items = json_decode($arr, true);
-
-    for($i=0;$i<count($items);$i++){
-        if($items[$i]['tax_method']==0){
-            $ttax+= $items[$i]['rwamt']*($items[$i]['tax_val']/100);
-        }else{
-            $ttax+= ($items[$i]['rwqty']*$items[$i]['rwprice_org'])*($items[$i]['tax_val']/100);
-        }
-    }
-
-    return $ttax;
-
-}
+include('workers/getters/functions.php');
 ?>
 
 <div class="content-page">

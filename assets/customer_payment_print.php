@@ -5,9 +5,15 @@ include("../workers/getters/functions.php");//make connection here
 if(isset($_POST['cust_payment_id']))
 {
     $cust_payment_id = $_POST['cust_payment_id'];
+    $cust_type = $_POST['type'];
 }
 //and i.inv_comp_code=cr.custid
-$sql = "SELECT i.*,c.*,cr.* from  invoices i , customer_payments c , customerprofile cr where c.cust_payment_id='$cust_payment_id' and i.inv_code=c.cust_payment_invoice_no  ;";
+if($cust_type == "auto"){
+    $sql = "SELECT i.*,c.*,cr.* from  invoices i , customer_payments c , customerprofile cr where c.cust_payment_id='$cust_payment_id' and i.inv_code=c.cust_payment_invoice_no  ;";
+
+}else{
+    $sql = "SELECT i.*,c.*,cr.* from  invoicesacc i , customer_paymentsacc c , customerprofile cr where c.cust_payment_id='$cust_payment_id' and i.inv_code=c.cust_payment_invoice_no  ;";
+}
 //echo $sql;
 $result = mysqli_query($dbcon,$sql);
 $row =$result-> fetch_assoc();
@@ -19,11 +25,13 @@ $sql1 = "SELECT * from comprofile where orgid='$inv_comp_code' limit 1 ";
 $result1 = mysqli_query($dbcon,$sql1);
 $row1 =$result1-> fetch_assoc();
 function get_itemDetails($dbcon,$code){
-    $sql = "SELECT * from purchaseitemaster where id='$code' ";
+    $sql = "SELECT * from salesitemaster2 where id='$code' ";
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
 
-    return "[".$row['itemcode']."]  ".$row['itemname']."<b> HSN : </b>".$row['hsncode'];
+    $ret = "[".$row['itemcode']."]  ".$row['itemname']."&nbsp;|&nbsp; HSN : ".$row['hsncode']."&nbsp;|&nbsp; ";
+    $ret.=  "GST@".($row['sales_taxrate']/1)."%";
+    return $ret;
 }
 
 
@@ -72,6 +80,15 @@ function get_itemDetails($dbcon,$code){
                             <tr>
                             <td style="border-bottom:1px solid #000;padding:5px;">
                                    <b>Received By</b>&nbsp; <?php echo $row['cust_payment_user']; ?>
+                                </td> 
+                            </tr>  
+                            <tr>  
+                            <td style="border-bottom:1px solid #000;padding:5px;">
+                            <b>Payment Term: </b><?php echo $row['inv_payterm']>1?$row['inv_payterm'].' Day(s)':"Advance"; ?>
+                                </td> 
+                            </tr>    
+                            <td style="padding:5px;">
+                            <b>Due Date: </b><?php echo $row['inv_payterm']>1? Date('d/m/Y', strtotime("+".$row['inv_payterm']." days")) : date("d/m/Y")  ?>
                                 </td> 
                             </tr>    
 
@@ -179,28 +196,17 @@ function get_itemDetails($dbcon,$code){
                                     <tbody>
                                         <tr>
                                             <td width="61%" style="text-align:center;border-bottom:1px solid #000;padding:10px;">
-                                                <b>Sub Total</b>
+                                                <b>Total</b>
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo get_grandtotal($grn_po_items_arr);?>
-                                            </td>
-                                        </tr>
-                                        <?php
-                                        for($i=0;$i<count($grn_po_items_arr);$i++){
-                                        ?>
-                                        <tr>
-                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
-                                                <?php echo get_taxtype($grn_po_items_arr[$i]); ?>
-                                            </td>
-                                            <td style="text-align:center;padding:10px;">
-                                                <?php echo get_taxvals($grn_po_items_arr[$i]);
+                                                <?php 
+                                                echo $cust_type == "auto" ? nf(get_total_notax($grn_po_items_arr)) : ' - ';
                                                 ?>
-
                                             </td>
                                         </tr>
-                                        <?php
-                                        }
-                                        ?>
+                                        <?php 
+                                        echo $cust_type == "auto" ? get_taxtype($grn_po_items_arr) : '';?>
+
                                     </tbody>
                                 </table>
                             </td>
@@ -218,10 +224,10 @@ function get_itemDetails($dbcon,$code){
                                     <tbody>
                                         <tr>
                                             <td width="56%" style="text-align:center;border-bottom:1px solid #000;padding:0px;">
-                                                <b>Total</b>
+                                                <b>Sub Total</b>
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo get_total($grn_po_items_arr);?>
+                                                <?php echo $cust_type == "auto" ? get_total($grn_po_items_arr) : get_grandAmttotal($grn_po_items_arr) ; ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -251,7 +257,7 @@ function get_itemDetails($dbcon,$code){
                                             ?>
 
                                             <td style="text-align:center;border-bottom:1px solid #000;padding:10px;"> 
-                                                <?php echo (get_total($grn_po_items_arr)-$po_discount)+$poadjustmentval;?>
+                                                <?php echo (($cust_type == "auto" ? get_total($grn_po_items_arr)-($po_discount)+($poadjustmentval) : get_grandAmttotal($grn_po_items_arr))-$po_discount)+$poadjustmentval;?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -259,7 +265,7 @@ function get_itemDetails($dbcon,$code){
                                                <b> Balance Due</b>
                                             </td>
                                             <td style="text-align:center;padding:10px;"> 
-                                                <?php echo ((get_total($grn_po_items_arr)-$po_discount)+$poadjustmentval)-$row['cust_payment_amount']; ?>
+                                                <?php echo $row['inv_balance_amt']; ?>
                                             </td>
                                         </tr>
                                     </tbody>

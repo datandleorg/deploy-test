@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-xl-12">
                     <div class="breadcrumb-holder">
-                        <h1 class="main-title float-left">Invoice list</h1>
+                        <h1 class="main-title float-left">Manual Invoice list</h1>
                         <ol class="breadcrumb float-right">
                             <li class="breadcrumb-item">Home</li>
                             <li class="breadcrumb-item active">List Invoice Items</li>
@@ -104,6 +104,7 @@
                                         $result = mysqli_query($dbcon,$sql);
                                         if ($result->num_rows > 0){
                                             while ($row =$result-> fetch_assoc()){
+                                                $payment_status = payment_status($row['inv_payment_status'],date('Y-m-d'),$row['inv_payterm'],$row['inv_date']) ;
                                                 echo "<tr>";
                                                 echo '<td style="display:none;">' .$row['id'] . '</td>';
                                                 echo '<td>' .$row['inv_code'] . '</td>';
@@ -114,7 +115,7 @@
                                                 echo '<td>'.$row['inv_value'].' </td>';
                                                 echo '<td>'.$row['inv_balance_amt'].' </td>';
                                                 if($row['inv_type']=="Credit Invoice"){
-                                                    echo '<td>'.payment_status($row['inv_payment_status'],date('Y-m-d'),$row['inv_payterm'],$row['inv_date']) .' </td>';
+                                                    echo '<td>'.$payment_status.' </td>';
 
                                                 }else{
                                                     echo '<td><span class="text-success">Paid</span> </td>';
@@ -145,11 +146,12 @@
 
 
                                                 }
-
-
-
+                                                if($payment_status!='<span class="text-success">Paid</span>'){
+                                                   
                                                     echo '
                                                         <a class="dropdown-item"  href="addCustomerReceiptsacc.php?inv_code=' . $row['inv_code'] . '&action=add&type=customer_paymentsacc" class="btn btn-danger btn-sm" data-placement="top" data-toggle="tooltip" data-title="Recieve Payment"><i class="fa fa-exchange" aria-hidden="true"></i>&nbsp; Recieve payment</a>';
+ 
+                                                }
 
 
                                                 

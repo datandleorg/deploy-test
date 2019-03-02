@@ -635,7 +635,6 @@ include('header.php');
                     data: {array : JSON.stringify(data),inv_code:page_inv_code,inv_owner:inv_owner_var,action:page_action?page_action:"add",table:"invoicesacc"},
                     dataType: 'json',
                     success:function(response){
-                        console.log(response);
                         var res = JSON.parse(response);
                         if(res.status){
                             if(page_action==''||page_action=='add'){

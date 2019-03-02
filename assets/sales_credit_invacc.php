@@ -32,7 +32,8 @@ function get_itemDetails($dbcon,$code){
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
 
-    return "[".$row['itemcode']."]  ".$row['itemname']."<br/> HSN : ".$row['hsncode'];
+    $ret = "[".$row['itemcode']."]  ".$row['itemname']."&nbsp;|&nbsp; HSN : ".$row['hsncode'];
+    return $ret;
 }
 function convertNumberToWord($num = false)
 {
@@ -187,12 +188,20 @@ function convertNumberToWordsForIndia($number){
                                     Invoice Date: <b><?php echo $row['inv_date']; ?></b>
                                 </td> 
                             </tr>   
-                            
-                            <tr>
+
+                                                          <tr>
                                 <td style="border-bottom:1px solid #000;padding:5px;">
-                                    Payment Term: <b><?php echo $row['inv_payterm'].' Day(s)'; ?></b>
+                                    Payment Term: <b><?php echo $row['inv_payterm']>1?$row['inv_payterm'].' Day(s)':"Advance"; ?></b>
                                 </td> 
+                               
                             </tr>   
+                            <tr>
+                                <td style="padding:5px;">
+                                    Due Date: <b><?php echo $row['inv_payterm']>1? Date('d/m/Y', strtotime("+".$row['inv_payterm']." days")) : date("d/m/Y")  ?></b>
+                                </td> 
+                               
+                            </tr>   
+
 
                         </table>
 
@@ -324,15 +333,15 @@ function convertNumberToWordsForIndia($number){
                                 </table>
 
                             </td>
-                            <td style="border:1px solid #000;width:60%;">
+                            <td style="border:1px solid #000;width:60%;display:none">
                                 <table width="100%" >
                                     <tbody>
                                         <tr>
                                             <td width="61%" style="text-align:center;border-bottom:1px solid #000;padding:10px;">
-                                              <b> Sub Total</b>
+                                              <b> Total</b>
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo nf(get_grandtotal($inv_items_arr));?>
+                                                <?php echo ''; ?>
                                             </td>
                                         </tr>
 
@@ -356,10 +365,10 @@ function convertNumberToWordsForIndia($number){
                                     <tbody>
                                         <tr>
                                             <td width="56%" style="text-align:center;border-bottom:1px solid #000;padding:0px;">
-                                                <b>Total</b>
+                                            <b> Sub Total</b>
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo nf(get_total($inv_items_arr));?>
+                                                <?php echo nf(get_grandAmttotal($inv_items_arr));?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -388,7 +397,7 @@ function convertNumberToWordsForIndia($number){
                                             $invadjustmentval = $inv_items_arr[0]->poadjustmentval==""?0:$inv_items_arr[0]->poadjustmentval;
                                             ?>
                                             <td style="text-align:center;padding:10px;"> 
-                                                <?php echo nf((get_total($inv_items_arr)-$inv_discount)+($invadjustmentval));?>
+                                                <?php echo nf((get_grandAmttotal($inv_items_arr)-$inv_discount)+($invadjustmentval));?>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -405,7 +414,7 @@ function convertNumberToWordsForIndia($number){
                                 <p><?php 
                                     $podiscount = $inv_items_arr[0]->podiscount==""?0:$inv_items_arr[0]->podiscount;
                                     $invadjustmentval = $inv_items_arr[0]->poadjustmentval==""?0:$inv_items_arr[0]->poadjustmentval;
-                                    $grdttl = (get_total($inv_items_arr)-$podiscount)+($invadjustmentval);
+                                    $grdttl = (get_grandAmttotal($inv_items_arr)-$podiscount)+($invadjustmentval);
                                     $whole = floor($grdttl);      // 1
                                     $fraction = ($grdttl - $whole)*100; 
                                     $paise = convertNumberToWord(round($fraction));

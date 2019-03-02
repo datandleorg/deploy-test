@@ -1,4 +1,60 @@
 <?php
+
+function get_total_notax($items){
+    $amt = 0;
+    for($i=0;$i<count($items);$i++){
+         $items[$i]->tax_method;
+        if($items[$i]->tax_method==0){
+             $amt+=  ($items[$i]->rwqty*$items[$i]->rwprice);
+        }else{
+             $amt+= ($items[$i]->rwqty*$items[$i]->rwprice)*(100/(100+$items[$i]->tax_val));
+        }
+    }
+
+    return $amt;
+}
+
+
+function getamt_total($arr){
+    $items = json_decode($arr, true);
+    //(100/($arr->tax_val+100)
+    $amt = 0;
+    for($i=0;$i<count($items);$i++){
+        $ttax = 0;
+        if($items[$i]['tax_method']==0){
+             $ttax=  ($items[$i]['rwqty']*$items[$i]['rwprice'])*($items[$i]['tax_val']/100);
+            $amt+=  ($items[$i]['rwqty']*$items[$i]['rwprice']) + $ttax; 
+        }else{
+            $taxableamt=  ($items[$i]['rwqty']*$items[$i]['rwprice'])*(100/(100+$items[$i]['tax_val']));
+            $ttax+=  $taxableamt*($items[$i]['tax_val']/100);
+            $amt+=  $taxableamt + $ttax; 
+
+        }
+    }
+
+    return $amt;
+}
+
+
+
+function gettaxamt_total($arr){
+    $ttax=0;
+    $items = json_decode($arr, true);
+    //(100/($arr->tax_val+100)
+
+    for($i=0;$i<count($items);$i++){
+        if($items[$i]['tax_method']==0){
+            $ttax+= $items[$i]['rwamt']*($items[$i]['tax_val']/100);
+        }else{
+            $ttax+= ($items[$i]['rwqty']*$items[$i]['rwprice_org'])*(100/($items[$i]['tax_val']+100));
+        }
+    }
+
+    return $ttax;
+
+}
+
+
 function get_id($dbcon,$table,$ui){
     $sql = "SELECT * FROM $table ORDER BY ID DESC LIMIT 1";
     $result = mysqli_query($dbcon, $sql);
@@ -15,11 +71,21 @@ function get_id($dbcon,$table,$ui){
     return $code;
 }
 
+function get_taxtype_each($arr){
+        $taxString = "";
+        if($arr->tax_type=="split"){
+            $taxString= "CGST @ ".($arr->tax_val/2)." %<br/>";
+            $taxString.= "SGST @ ".($arr->tax_val/2)." %";
+        }else{
+            $taxString= "IGST @ ".($arr->tax_val);
+        }
+        return $taxString;
+ }
 
 function gettaxamt_print($arr){
 
     if($arr->tax_method==0){
-        return nf($arr->rwprice*$arr->rwqty);
+        return nf(($arr->rwprice*$arr->rwqty)*($arr->tax_val/100));
     }else{
         return nf(($arr->rwprice*$arr->rwqty)*(100/($arr->tax_val+100)));
     }
@@ -27,47 +93,96 @@ function gettaxamt_print($arr){
 
 
 function get_taxtype($arr){
+
     $taxString = "";
-    if($arr->tax_type=="split"){
-        $taxString= "CGST @ ".($arr->tax_val/2)." %<br/>";
-        $taxString.= "SGST @ ".($arr->tax_val/2)." %";
-    }else{
-        $taxString= "IGST @ ".($arr->tax_val);
-    }
+    $splitTaxArr = array();
+    $singleTaxArr = array();
+   
+    foreach($arr as $item)
+{ 
+    $taxvals[$item->tax_val][] = $item;
+}
+
+
+foreach($taxvals as $item)
+{ 
+        $taxtypes =array();
+        //print_r($item);
+        foreach($item as $itemine)
+        { 
+            $taxtypes[$itemine->tax_type][] = $itemine;
+        }
+
+        if(isset($taxtypes['single']) &&count($taxtypes['single'])>0){
+            $taxString.= '<tr>';
+
+            $taxString.= '<td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">';
+            $taxString.= "IGST @ ".($taxtypes['single'][0]->tax_val/1)." %";
+            $taxString.= '</td>';
+            $taxString.= '<td width="40%" style="text-align:center;border:0px solid #000;padding:10px;">';
+            $taxString.= calctaxAmt($item,'single').'</td>';
+            $taxString.= '</tr>';
+
+        }
+
+        if(isset($taxtypes['split']) && count($taxtypes['split'])>0){
+            $taxString.= '<tr>';
+
+            $taxString.= '<td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">';
+            $taxString.= "CGST @ ".($taxtypes['split'][0]->tax_val/2)." %<br/>";
+            $taxString.= "SGST @ ".($taxtypes['split'][0]->tax_val/2)." %";
+            $taxString.= '</td>';
+            $taxString.= '<td width="40%" style="text-align:center;border:0px solid #000;padding:10px;">';
+            $taxString.= calctaxAmt($item,'split').'</td>';
+            $taxString.= '</tr>';
+
+        }
+
+
+    
+}
+ 
     return $taxString;
 }
+
 
 function nf($number){
     return number_format((float)$number, 2, '.', '');
 }
 
-function get_taxvals($arr){
-    $taxamtString = "";
-    if($arr->tax_method==0){
-        if($arr->tax_type=="split"){
-            $taxamtString =  nf(($arr->rwamt*($arr->tax_val/100))/2);
-            $taxamtString.= "<br/>";
-            $taxamtString.=  nf(($arr->rwamt*($arr->tax_val/100))/2);
-        }else{
-            $taxamtString.=  nf($arr->rwamt*($arr->tax_val/100));
-        }
-    }else{
-        if($arr->tax_type=="split"){
-            // $taxamtString =  nf(($arr->rwqty*$arr->rwprice_org)*($arr->tax_val/100)/2)."<br/>";
-            $total =  nf(($arr->rwamt)*(100/($arr->tax_val+100)));
-            $total = nf(($total*($arr->tax_val/100))/2);
-            $taxamtString = nf($total)."<br/>";
-            $taxamtString.=  nf($total);
-        }else{
-            $total =  nf(($arr->rwamt)*(100/($arr->tax_val+100)));
-            $taxamtString.=  nf(($total*($arr->tax_val/100)));
-        }
+function calctaxAmt($arr,$type){
+    $amt = "";
+    $taxAmt = 0;
+    foreach($arr as $item)
+    { 
+            $splitTax = 0;
+            $singleTax = 0;
+            
+            if($type==$item->tax_type){
+
+               if($item->tax_method==0){
+                    $taxAmt+=  nf(($item->rwamt*($item->tax_val/100)));
+               }else{
+                    $total =  nf(($item->rwamt)*(100/($item->tax_val+100)));
+                    $total = nf(($total*($item->tax_val/100)));
+                    $taxAmt+= $total;
+               }
+
+            }
 
     }
-    return $taxamtString;
+
+    if($type=="split"){
+       $amt = nf($taxAmt/2)."<br/>".nf($taxAmt/2);
+    }else{
+       $amt = $taxAmt;
+    }
+
+    return $amt;
 }
 
 function get_total($so_items_arr){
+
     $amt = 0;
     for($i=0;$i<count($so_items_arr);$i++){
             $fsubtotal = $so_items_arr[$i]->rwprice*$so_items_arr[$i]->rwqty;
@@ -93,8 +208,17 @@ function get_grandtotal($po_items_arr){
     for($i=0;$i<count($po_items_arr);$i++){
         $amt = 0;
         $tax = gettaxamt_print($po_items_arr[$i]);
-        $total = $amt+$tax;
-        $grand_amt = $grand_amt +$total;
+        $grand_amt= $amt+$tax;
+    }
+
+    return nf($grand_amt);
+}
+
+function get_grandAmttotal($po_items_arr){
+    $grand_amt = 0;
+    for($i=0;$i<count($po_items_arr);$i++){
+        $amt = nf($po_items_arr[$i]->rwqty*$po_items_arr[$i]->rwprice);
+        $grand_amt = $grand_amt +$amt;
     }
 
     return nf($grand_amt);

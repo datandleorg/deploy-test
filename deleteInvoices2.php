@@ -1,11 +1,9 @@
 <?php
 include("database/db_conection.php");//make connection here
-include("workers/getters/functions.php");//make connection here
-   
-// sql to delete a record
+    // sql to delete a record
 //	echo $_GET['so_code'];
-$inv_code = $_GET['inv_code'];
-$past = findbyand($dbcon,$inv_code,"invoices","inv_code");
+$inv_code = $_GET['id'];
+$past = findbyand($dbcon,$inv_code,"invoicesacc","inv_code");
 $val_arr = $past['values'];
 $obj2 = json_decode($val_arr[0]['inv_items'], true);
 for($i=0;$i<count($obj2);$i++){
@@ -17,10 +15,10 @@ for($i=0;$i<count($obj2);$i++){
     }
 }	
 
-    $sql = "DELETE FROM invoices WHERE inv_code='".$inv_code."' ";
+    $sql = "DELETE FROM invoicesacc WHERE inv_code='".$inv_code."' ";
 
     if ($dbcon->query($sql) === TRUE) {
-      header("Location: listInvoices.php");
+      header("Location: listInvoicesacc.php");
     } else {
        echo "Error deleting record: " . $dbcon->error;
     }

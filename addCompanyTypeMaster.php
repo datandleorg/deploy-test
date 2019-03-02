@@ -654,7 +654,6 @@ $image 	 =	$_POST['image'];
 <script>
                 function onlocode(){
 
-                    console.log(this);
                 }
             </script>
 <!-- END Java Script for this page -->

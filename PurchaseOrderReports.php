@@ -2,21 +2,6 @@
 include('header.php');
 include('workers/getters/functions.php');
 
-function gettaxamt_total($arr){
-    $ttax=0;
-    $items = json_decode($arr, true);
-
-    for($i=0;$i<count($items);$i++){
-        if($items[$i]['tax_method']==0){
-            $ttax+= $items[$i]['rwamt']*($items[$i]['tax_val']/100);
-        }else{
-            $ttax+= ($items[$i]['rwqty']*$items[$i]['rwprice_org'])*($items[$i]['tax_val']/100);
-        }
-    }
-
-    return $ttax;
-
-}
 ?>
 
 <div class="content-page">
@@ -138,13 +123,15 @@ function gettaxamt_total($arr){
                                             $result = mysqli_query($dbcon,$sql);
                                             if ($result->num_rows > 0){
                                                 while ($row =$result-> fetch_assoc()){
+                                                    $po_items_arr = json_decode($row['po_items']);
+
                                                     echo '                           <tr>
                                                 <td>'.$row['po_code'].'</td>
                                                 <td>'.$row['po_date'].'</td>
                                                 <td>'.$row['supname'].'</td>
-                                                <td>'.nf(($row['po_value']-gettaxamt_total($row['po_items']))).'</td>
-                                                <td>'.nf(gettaxamt_total($row['po_items'])).'</td>
-                                                <td>'.nf($row['po_value']).'</td>
+                                                <td>'.nf(get_total_notax($po_items_arr)).'</td>
+                                                <td>'.nf(get_total($po_items_arr)- get_total_notax($po_items_arr)).'</td>
+                                                <td>'.nf(get_total($po_items_arr)).'</td>
                                             </tr>';  
                                                 }
                                             }

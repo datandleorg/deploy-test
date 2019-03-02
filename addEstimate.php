@@ -528,7 +528,6 @@ include('header.php');
 
             var loction_params = [];
             var lasttc = Page.get_lasttc('estimates');
-            console.log(lasttc);
             $('#est_tc').val(lasttc);
             Page.load_select_options('est_cust_shipping_state',loction_params,'state','Shipping State','code','description',3);
             Page.load_select_options('est_cust_billing_state',loction_params,'state','Billing State','code','description',3);

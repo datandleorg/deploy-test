@@ -9,9 +9,11 @@ if(isset($_POST['inv_code']))
     $sql = "SELECT * from invoices where inv_code = '$inv_code' ";
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
+    //print_r($row);
     $inv_comp_code = $row['inv_comp_code'];
     $inv_customer = $row['inv_customer'];
     $inv_items = $row['inv_items'];
+    $inv_bal_amt = $row['inv_balance_amt'];
     $inv_items_arr = json_decode($inv_items);
     $sql1 = "SELECT * from comprofile where orgid='$inv_comp_code' limit 1 ";
     $result1 = mysqli_query($dbcon,$sql1);
@@ -32,7 +34,9 @@ function get_itemDetails($dbcon,$code){
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
 
-    return "[".$row['itemcode']."]  ".$row['itemname']." <b>HSN:</b> ".$row['hsncode'];
+    $ret = "[".$row['itemcode']."]  ".$row['itemname']."&nbsp;|&nbsp;HSN: ".$row['hsncode']."&nbsp;|&nbsp; ";
+    $ret.=  "GST@".($row['sales_taxrate']/1)."%";
+    return $ret;
 }
 function convertNumberToWord($num = false)
 {
@@ -122,8 +126,15 @@ function convertNumberToWord($num = false)
                             </tr>    
                                <tr>
                                 <td style="border-bottom:1px solid #000;padding:5px;">
-                                    Payment Term: <b><?php echo $row['inv_payterm'].' Days(s)'; ?></b>
+                                    Payment Term: <b><?php echo $row['inv_payterm']>1?$row['inv_payterm'].' Day(s)':"Advance"; ?></b>
                                 </td> 
+                               
+                            </tr>   
+                            <tr>
+                                <td style="padding:5px;">
+                                    Due Date: <b><?php echo $row['inv_payterm']>1? Date('d/m/yyyy', strtotime("+".$row['inv_payterm']." days")) : date("d/m/yyyy")  ?></b>
+                                </td> 
+                               
                             </tr>   
 
                         </table>
@@ -269,28 +280,13 @@ function convertNumberToWord($num = false)
                                     <tbody>
                                         <tr>
                                             <td width="61%" style="text-align:center;border-bottom:1px solid #000;padding:10px;">
-                                                <b>Sub Total</b>
+                                                <b>Total</b>
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo nf(get_grandtotal($inv_items_arr));?>
+                                                <?php echo nf(get_total_notax($inv_items_arr));?>
                                             </td>
                                         </tr>
-                                        <?php
-                                        for($i=0;$i<count($inv_items_arr);$i++){
-                                        ?>
-                                        <tr>
-                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
-                                                <?php echo get_taxtype($inv_items_arr[$i]); ?>
-                                            </td>
-                                            <td style="text-align:center;padding:10px;">
-                                                <?php echo get_taxvals($inv_items_arr[$i]);
-                                                ?>
-
-                                            </td>
-                                        </tr>
-                                        <?php
-                                        }
-                                        ?>
+                                        <?php echo get_taxtype($inv_items_arr); ?>
                                     </tbody>
                                 </table>
                             </td>
@@ -311,7 +307,7 @@ function convertNumberToWord($num = false)
                                     <tbody>
                                         <tr>
                                             <td width="56%" style="text-align:center;border-bottom:1px solid #000;padding:0px;">
-                                               <b> Total</b>
+                                               <b> Sub Total</b>
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
                                                 <?php echo nf(get_total($inv_items_arr));?>
@@ -334,7 +330,7 @@ function convertNumberToWord($num = false)
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td width="56%" style="text-align:center;padding:0px;">
+                                            <td width="56%" style="text-align:center;padding:0px;border-bottom:1px solid #000;">
                                                 <b>Grand Total</b>
                                             </td>
                                             <?php
@@ -342,8 +338,16 @@ function convertNumberToWord($num = false)
 
                                             $invadjustmentval = $inv_items_arr[0]->poadjustmentval==""?0:$inv_items_arr[0]->poadjustmentval;
                                             ?>
-                                            <td style="text-align:center;padding:10px;"> 
+                                            <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
                                                 <?php echo nf((get_total($inv_items_arr)-$inv_discount)+($invadjustmentval));?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="56%" style="text-align:center;border-bottom:1px solid #000;padding:10px;">
+                                                Balance Due
+                                            </td>
+                                            <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
+                                               <?php echo nf($inv_bal_amt); ?>
                                             </td>
                                         </tr>
                                     </tbody>

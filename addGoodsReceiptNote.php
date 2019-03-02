@@ -357,7 +357,7 @@ if(isset($_GET['grn_id']))
                                         &nbsp;&nbsp;&nbsp;&nbsp; <button class="btn btn-primary" name="submit" type="submit">
                                         Submit
                                         </button>
-                                        <button type="reset" name="cancel" class="btn btn-secondary m-l-5">
+                                        <button type="reset" name="cancel" class="btn btn-secondary m-l-5" onclick="window.history.back();">
                                             Cancel
                                         </button>
                                     </div>
@@ -407,6 +407,7 @@ if(isset($_GET['grn_id']))
                 var trIndex = $(this).closest("tr").index();
                 if(trIndex>1) {
                     $(this).closest("tr").remove();
+                    rowitem.update_math_vals('po');
                 } else {
                     alert("Sorry!! Can't remove first row!");
                 }
@@ -435,7 +436,6 @@ if(isset($_GET['grn_id']))
                     var po_data = get_po_values(grn_data.grn_po_code);
                     set_po_form_vals(po_data);
                 }
-                console.log(JSON.parse(grn_data.grn_po_items));
                 set_math_vals_grn(JSON.parse(grn_data.grn_po_items));
             }
 
@@ -459,7 +459,6 @@ if(isset($_GET['grn_id']))
             set_math_vals_po(JSON.parse(po_data.po_items));
         }
         function set_grn_values(data){
-            console.log(data);
             var purchaseorder_params = [];
             purchaseorder_params[0] = {po_vendor:$('#grn_po_vendor').val()};
             Page.load_select_options('grn_po_code',purchaseorder_params,'purchaseorders','PO Number','po_code',null);  
@@ -468,13 +467,15 @@ if(isset($_GET['grn_id']))
             $('#grn_invoice_no').val(data.grn_invoice_no);
             $('#grn_invoice_date').val(data.grn_invoice_date);
             $('#grn_notes').val(data.grn_notes);
+            $('#grn_po_shippingvia').val(data.grn_po_shippingvia);
+            $('#grn_po_deliveryat').val(data.grn_po_deliveryat);
             $('#grn_delivery_on').val(data.grn_delivery_on);
             $('#grn_status').val(data.grn_status);
 
             $('#grn_po_code').attr('disabled',true);
 
         }
-
+        
         function get_form_datum_grn_id(page_grn_id,page_table){
             var grn_data = Page.get_edit_vals(page_grn_id,page_table,"grn_id");
             return grn_data;
@@ -517,7 +518,7 @@ if(isset($_GET['grn_id']))
 
                 $('#tb tr').eq(r+1).find('#item_select').val(po_items_json[r].itemcode);
                 $('#tb tr').eq(r+1).find('#price').val(po_items_json[r].rwprice);
-                $('#tb tr').eq(r+1).find('#price').attr('data-price',po_items_json[r].tax_method==1?po_items_json[r].rwprice_org:po_items_json[r].rwprice);
+                $('#tb tr').eq(r+1).find('#price').attr('data-price',po_items_json[r].rwprice);
                 $('#tb tr').eq(r+1).find('#qty').val(po_items_json[r].rwqty);
                 $('#tb tr').eq(r+1).find('#qtyorded').val(po_items_json[r].rwqty);
                 rowarray[r] = po_items_json[r].rwqty

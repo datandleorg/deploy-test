@@ -32,7 +32,9 @@ function get_itemDetails($dbcon,$code){
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
 
-    return "[".$row['itemcode']."]  ".$row['itemname']."<br/> HSN : ".$row['hsncode'];
+    $ret = "[".$row['itemcode']."]  ".$row['itemname']."&nbsp;|&nbsp;HSN : ".$row['hsncode']."&nbsp;|&nbsp; ";
+    $ret.=  "GST@".($row['sales_taxrate']/1)."%";
+    return $ret;
 }
 function convertNumberToWord($num = false)
 {
@@ -177,6 +179,9 @@ function convertNumberToWordsForIndia($number){
                             <tr>
                                 <td style="padding:5px;"><b>Payment Term: </b><?php echo $row['so_payterm']>1?$row['so_payterm'].' Day(s)':"Advance"; ?></td> 
                             </tr>    
+                            <tr>
+                                <td style="padding:5px;"><b>Due Date: </b><?php echo $row['so_payterm']>1? Date('d/m/Y', strtotime("+".$row['so_payterm']." days")) : date("d/m/Y")  ?></td> 
+                            </tr> 
                         </table>
 
                     </td>
@@ -341,25 +346,11 @@ function convertNumberToWordsForIndia($number){
                                                 Total
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo nf(get_grandtotal($so_items_arr));?>
+                                                <?php echo nf(get_total_notax($so_items_arr));?>
                                             </td>
                                         </tr>
-                                        <?php
-                                        for($i=0;$i<count($so_items_arr);$i++){
-                                        ?>
-                                        <tr>
-                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
-                                                <?php echo get_taxtype($so_items_arr[$i]); ?>
-                                            </td>
-                                            <td style="text-align:center;padding:10px;">
-                                                <?php echo get_taxvals($so_items_arr[$i]);
-                                                ?>
+                                        <?php echo get_taxtype($so_items_arr); ?>
 
-                                            </td>
-                                        </tr>
-                                        <?php
-                                        }
-                                        ?>
                                     </tbody>
                                 </table>
                             </td>

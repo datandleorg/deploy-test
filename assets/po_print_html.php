@@ -27,12 +27,16 @@ if(isset($_POST['po_code']))
     $row3 =$result3-> fetch_assoc();
 
 }
+
+
 function get_itemDetails($dbcon,$code){
     $sql = "SELECT * from purchaseitemaster where id='$code' ";
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
 
-    return "[".$row['itemcode']."]  ".$row['itemname']."<br/> HSN : ".$row['hsncode'];
+    $ret = "[".$row['itemcode']."]  ".$row['itemname']." &nbsp;|&nbsp; HSN : ".$row['hsncode']."&nbsp;|&nbsp;";
+    $ret.=  "GST@ ".($row['taxrate']/1)."%";
+    return $ret;
 }
 function convertNumberToWord($num = false)
 {
@@ -124,6 +128,9 @@ function convertNumberToWord($num = false)
                             </tr>    
                             <tr>
                                 <td style="padding:5px;"><b>Payment Term: </b><?php echo $row['po_payterm']>1?$row['po_payterm'].' Day(s)':"Advance"; ?></td> 
+                            </tr>  
+                            <tr>
+                                <td style="padding:5px;"><b>Due Date: </b><?php echo $row['po_payterm']>1? Date('d/m/Y', strtotime("+".$row['po_payterm']." days")) : date("d/m/Y")  ?></td> 
                             </tr>    
                         </table>
 
@@ -233,25 +240,11 @@ function convertNumberToWord($num = false)
                                                 Total
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo nf(get_grandtotal($po_items_arr));?>
+                                                <?php echo nf(get_total_notax($po_items_arr));?>
                                             </td>
                                         </tr>
-                                        <?php
-                                        for($i=0;$i<count($po_items_arr);$i++){
-                                        ?>
-                                        <tr>
-                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
-                                                <?php echo get_taxtype($po_items_arr[$i]); ?>
-                                            </td>
-                                            <td style="text-align:center;padding:10px;">
-                                                <?php echo get_taxvals($po_items_arr[$i]);
-                                                 ?>
-
-                                            </td>
-                                        </tr>
-                                        <?php
-                                        }
-                                        ?>
+                                     
+                                                <?php echo get_taxtype($po_items_arr); ?>
                                     </tbody>
                                 </table>
                             </td>

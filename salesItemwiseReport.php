@@ -1,34 +1,37 @@
 <?php
 include('header.php');
 include('workers/getters/functions.php');
-include('generic_modal.php');
-
 
 function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
     $curdate=strtotime($newdate);
     $mydate=strtotime('+'.$po_payterm.' day', strtotime($grn_date));
-
     if($curdate > $mydate)
     {
         return 'Overdue';
     }
 }
+function getSaleItemCount($getArr, $itemCodeId) {
+    $itemsCount=0;
+    $getArrItems = json_decode($getArr, true);
+    for($i=0;$i<count($getArrItems);$i++){
+        if($getArrItems[$i]['itemcode'] == $itemCodeId){
+            $itemsCount = $getArrItems[$i]['rwqty'];
+        }
+    }
+    return $itemsCount;
+}
 ?>
-
 <div class="content-page">
-
     <!-- Start content -->
     <div class="content">
-
         <div class="container-fluid">
-
             <div class="row">
                 <div class="col-xl-12">
                     <div class="breadcrumb-holder">
-                        <h1 class="main-title float-left"> Customer Recievables Report</h1>
+                        <h1 class="main-title float-left"> Sales Itemwise Report</h1>
                         <ol class="breadcrumb float-right">
                             <li class="breadcrumb-item">Home</li>
-                            <li class="breadcrumb-item active">Customer Recievables Reprot</li>
+                            <li class="breadcrumb-item active">Sales Itemwise Reprot</li>
                         </ol>
                         <div class="clearfix"></div>
                     </div>
@@ -36,15 +39,11 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
             </div>
             <!-- end row -->
             <div class="row">
-
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
                     <div class="card mb-3">
                         <div class="card-header">
-
-
-                            <h3><i class="fa fa-cart-plus bigfonts" aria-hidden="true"></i><b>&nbsp;Customer Recievables Report</b></h3>
+                            <h3><i class="fa fa-cart-plus bigfonts" aria-hidden="true"></i><b>&nbsp;Sales Itemwise Report</b></h3>
                         </div>
-
                         <div class="card-body">
                             <div class="form-group row">
                                 <div class="col-sm-4">
@@ -57,7 +56,6 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                         </span>
                                     </div>
                                 </div>
-
                                 <div class="form-group col-sm-3">
                                     <select id="custwise" class="form-control form-control-md" name="custwise">
                                         <option value=''>--Select Customer--</option>
@@ -67,13 +65,10 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                             $custid=$row['custid'];
                                             $custname=$row['custname'];
                                             echo '<option  value="'.$custid.'" >'.$custid.' '.$custname.'</option>';
-
                                         }
                                         ?>
                                     </select>
-
                                 </div>
-
                                 <div class="form-group col-md-3">
                                     <select id="pstatuswise" class="form-control form-control-md" name="pstatuswise">
                                         <option value="" selected>Open Payment Status</option>
@@ -81,9 +76,7 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                         <option value="Partially Paid">Partially Paid</option>
                                         <option value="Overdue">Overdue</option>
                                     </select>
-
                                 </div>
-
                                 <div class="col-sm-2">
                                     <button type="button" class="btn btn-primary" onclick="get_custrec_reports();">Run Report</button>
                                 </div>
@@ -91,34 +84,39 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                             <hr/>
                             <!-- Start coding here -->
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12 table-responsive">
                                     <span id="po_reports_div"></span>
-                                    <table id="po_reports" class="table table-bordered" style="width:100%">
+                                    <table id="po_reports" class="table table-bordered" style="overflow-x:hidden;">
                                         <thead>
                                             <tr>
                                                 <th>Invoice#</th>
-                                                <th>SO#</th>
-                                                <th>Due Date</th>
+                                                <th>Invoice Date</th>
                                                 <th>Customer</th>
-                                                <th>Amount Before GST</th>
-                                                <th>Tax Value</th>
-                                                <th>Total</th>
-                                                <th>Amount Paid</th>
-                                                <th>Balance Due</th>
-                                                <th>Actions</th>
+                                                <th>250 ml</th>
+                                                <th>500 ml</th>
+                                                <th>500 ml(20)</th>
+                                                <th>500 ml(30)</th>
+                                                <th>500 ml(40)</th>
+                                                <th>1000 ml Rly</th>
+                                                <th>1000 ml</th>
+                                                <th>1000 ml(50)</th>
+                                                <th>2000 ml(30)</th>
+                                                <th>2000 ml(35)</th>
+                                                <th>5000 ml</th>
+                                                <th>Sales By</th>
+                                                <th>Truck</th>
+                                                <th>Driver Name</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
                                             if((isset($_GET['st'])&&$_GET['st']!='')||(isset($_GET['end'])&&$_GET['end']!='')||(isset($_GET['custwise'])&&$_GET['custwise'])||(isset($_GET['pstatuswise'])&&$_GET['pstatuswise']!='')){ 
-
                                                 $timestamp = strtotime($_GET['st']);
                                                 $st = date('Y-m-d', $timestamp);
                                                 $timestamp = strtotime($_GET['end']);
                                                 $end = date('Y-m-d', $timestamp);
                                                 $custwise = $_GET['custwise'];
                                                 $pstatuswise = $_GET['pstatuswise'];
-
                                                 $sql = "SELECT * from invoices i,customerprofile c where 1=1  ";
                                                 if($_GET['st']!=''){
                                                     if($st==$end){
@@ -128,11 +126,9 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                                     }
                                                 }
                                                 if(isset($_GET['custwise'])&&$_GET['custwise']!=''){
-                                                    // echo $_GET['vendorwise'];
                                                     $sql.=" and i.inv_customer='".$_GET['custwise']."'";    
                                                 }
                                                 if(isset($_GET['pstatuswise'])&&$_GET['pstatuswise']!=''){
-                                                    //echo $_GET['pstatuswise'];
                                                     if($_GET['pstatuswise']=="Overdue"){
                                                         $sql.=" and (i.inv_payment_status='Unpaid' OR i.inv_payment_status='Partially Paid') and CURDATE()>DATE_ADD(i.inv_date, INTERVAL i.inv_payterm DAY) ";    
                                                     }else{
@@ -144,37 +140,41 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                             }else{
                                                 $sql = "SELECT * from invoices i,customerprofile c where i.inv_customer=c.custid and i.inv_balance_amt>0;";    
                                             }
-
                                             $result = mysqli_query($dbcon,$sql);
                                             if ($result->num_rows > 0){
                                                 while ($row =$result-> fetch_assoc()){
-                                                    $inv_items = json_decode($row['inv_items']);
-
-                                                    echo '                           <tr>
-                                                <td>'.$row['inv_code'].'</td>
-                                                <td>'.$row['inv_so_code'].'</td>
-                                                <td>'.$row['inv_date'].'</td>
-                                                <td>'.$row['custname'].'</td>
-                                                <td>'.nf(get_total_notax($inv_items)).'</td>
-                                                <td>'.nf((get_total($inv_items))-nf(get_total_notax($inv_items))).'</td>
-                                                <td>'.nf(get_total($inv_items)).'</td>
-                                                <td>'.nf((get_total($inv_items))-$row['inv_balance_amt']).'</td>
-                                                <td>'.nf($row['inv_balance_amt']).'</td>
-                                                <td>
-                                                <a class="btn btn-default" href="#" onclick="printContent(this);" data-template="sales_credit_inv" 
-                                                data-img="assets/images/dhirajLogo.png" data-id="po_print" data-code="'.$row['inv_code'].'">
-                                                <i class="fa fa-print" 
-                                                aria-hidden="true"></i></a></td>
-
-                                            </tr>';  
+                                                    echo '<tr>
+                                                    <td>'.$row['inv_code'].'</td>
+                                                    <td>'.$row['inv_date'].'</td>
+                                                    <td>'.$row['custname'].'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],1).'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],2).'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],3).'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],4).'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],5).'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],6).'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],7).'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],8).'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],9).'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],10).'</td>
+                                                    <td>'.getSaleItemCount($row['inv_items'],12).'</td>
+                                                    <td>'.$row['inv_owner'].'</td>
+                                                    <td>'.$row['inv_truck_no'].'</td>
+                                                    <td>'.$row['inv_driver_name'].'</td>
+                                                    </tr>';  
                                                 }
                                             }
                                             ?>
-
-
                                         </tbody>
                                         <tfoot>
                                             <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
@@ -190,36 +190,24 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                     </table>
                                 </div>
                             </div>
-
-
                         </div>
                     </div><!-- end card-->
-                    <div id="po_print" style="display:;">
-
-
-</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-
 <script>
     var page_custwise = "<?php if(isset($_GET['custwise'])){ echo $_GET['custwise']; } ?>";
     var page_st = "<?php if(isset($_GET['st'])){ echo $_GET['st']; } ?>";
     var page_end = "<?php if(isset($_GET['end'])){ echo $_GET['end']; } ?>";
     var page_pstatuswise = "<?php if(isset($_GET['pstatuswise'])){ echo $_GET['pstatuswise']; } ?>";
-
     $(document).ready(function() {
         $('#custwise').val(page_custwise);
         $('#pstatuswise').val(page_pstatuswise);
         $("#reset-date").hide();
-
         $('#daterange').daterangepicker({
             ranges: {
                 'Today': [moment(), moment()],
@@ -236,23 +224,18 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
         }, function(start, end, label) {
             $('#daterange').attr('readonly',true); 
             $("#reset-date").show();
-
         });
-
         if(page_end!=''){
             cb(page_st,page_end);
         }else{
             $('#daterange').val(''); 
         }
-
         $("#reset-date").click(function(){
             $('#daterange').val('');
             $('#daterange').attr('readonly',false); 
             $("#reset-date").hide();
         });
-
         var date_range = $('#daterange').val(); 
-
         var cust_var = $('#custwise').val(); 
         var cust_name_json = cust_var!=''?Page.get_edit_vals(cust_var,"customerprofile","custid"):'';
         var cust_name = cust_name_json.custname;
@@ -265,7 +248,6 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
         excel_printhead+= status_var!=''?'Payment Status : '+status_var:'';
         excel_printhead+= '  ';
         excel_printhead+= date_range!=''?'Date : '+date_range:'';
-
         var table = $('#po_reports').DataTable( {
             lengthChange: false,
             "footerCallback": function ( row, data, start, end, display ) {
@@ -276,49 +258,29 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                     typeof i === 'number' ?
                         i : 0;
                 };
-                var grossval = api
-                .column( 4 )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 ).toFixed(2);
-
-                var taxamt = api
-                .column( 5 )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 ).toFixed(2);
-
-                var netval = api
-                .column( 6 )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 ).toFixed(2);
-
-                var amtpaid = api
-                .column( 7 )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 ).toFixed(2);
-
-                var bal = api
-                .column( 8 )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 ).toFixed(2);
-
-
+                var _250ml = api.column( 3 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
+                var _500ml = api.column( 4 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
+                var _500ml20 = api.column( 5 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
+                var _500ml30 = api.column( 6 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
+                var _500ml40 = api.column( 7 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
+                var _1000mlRly = api.column( 8 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
+                var _1000ml = api.column( 9 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
+                var _1000ml50 = api.column( 10 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
+                var _2000ml30 = api.column( 11 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
+                var _2000ml35 = api.column( 12 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
+                var _5000ml = api.column( 13 ).data().reduce( function (a, b) { return intVal(a) + intVal(b); }, 0 );
                 $( api.column( 0 ).footer() ).html('Total');
-                $( api.column( 5 ).footer() ).html(grossval);
-                $( api.column( 4 ).footer() ).html(taxamt);
-                $( api.column( 6 ).footer() ).html(netval);
-                $( api.column( 7 ).footer() ).html(amtpaid);
-                $( api.column( 8 ).footer() ).html(bal);
-
+                $( api.column( 3 ).footer() ).html(_250ml);
+                $( api.column( 4 ).footer() ).html(_500ml);
+                $( api.column( 5 ).footer() ).html(_500ml20);
+                $( api.column( 6 ).footer() ).html(_500ml30);
+                $( api.column( 7 ).footer() ).html(_500ml40);
+                $( api.column( 8 ).footer() ).html(_1000mlRly);
+                $( api.column( 9 ).footer() ).html(_1000ml);
+                $( api.column( 10 ).footer() ).html(_1000ml50);
+                $( api.column( 11 ).footer() ).html(_2000ml30);
+                $( api.column( 12 ).footer() ).html(_2000ml35);
+                $( api.column( 13 ).footer() ).html(_5000ml);
             },
             buttons: [
                 {
@@ -330,9 +292,8 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                         $(win.document.body)
                             .css( 'font-size', '10pt' )
                             .prepend(
-                            '<p><img src="<?php echo $baseurl;?>assets/images/dhirajLogo.png" style="width:50px;height:50px;" /></p><p class="lead text-center"><b>Customer Receivables</b><br/></p>'+printhead+'</div>'
+                            '<p><img src="<?php echo $baseurl;?>assets/images/dhirajLogo.png" style="width:50px;height:50px;" /></p><p class="lead text-center"><b>Sales Itemwise</b><br/></p>'+printhead+'</div>'
                         );
-
                         $(win.document.body).find( 'table' )
                             .addClass( 'compact' )
                             .css( 'font-size', 'inherit' );
@@ -341,16 +302,14 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                 {
                     extend: 'excel',
                     text:'<span class="fa fa-file-excel-o"></span>',
-                    title:'Customer Receivables Reports', footer: true ,
+                    title:'Sales Itemwise Reports', footer: true ,
                     messageTop: excel_printhead   
-
                 },
                 {
                     extend: 'pdf',
                     text:'<span class="fa fa-file-pdf-o"></span>',
-                    title:'Customer Receivables Reports', footer: true ,
+                    title:'Sales Itemwise Reports', footer: true ,
                     messageTop: excel_printhead   
-
                 },
                 {
                     extend: 'colvis',
@@ -358,18 +317,12 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                 }
             ]
         } );
-
-
         table.buttons().container()
             .appendTo( '#po_reports_div');
-
-
     });
-
     function get_custrec_reports(){
         var st = '';
         var end = '';
-
         var date_range_val = $('#daterange').val();
         if(date_range_val!=''){
             var date_range = date_range_val.replace(" ","").split('-');
@@ -377,92 +330,14 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
             st = date_range[0].replace(" ","");
             end = date_range[1].replace(" ","");
         }
-
         var custwise = $('#custwise').val();
         var pstatuswise = $('#pstatuswise').val();
-        location.href="CustomerReceivablesReports.php?st="+st+"&end="+end+"&custwise="+custwise+"&pstatuswise="+pstatuswise;
-
+        location.href="salesItemwiseReport.php?st="+st+"&end="+end+"&custwise="+custwise+"&pstatuswise="+pstatuswise;
     }
-
     function cb(start, end) {
         $('#daterange').val(start+ ' - ' + end);
         $('#daterange').attr('readonly',true); 
         $("#reset-date").show();
     }
-
-    
-    function show_line_items(x){
-        var id = encodeURI($(x).attr('data-id'));
-        var type = $(x).attr('data-type');
-
-        $.ajax ({
-            url: 'workers/getters/get_line_items_view.php?type='+type+'&id='+id,
-            type: 'GET',
-            async :false,
-            success:function(x){
-                var out = JSON.parse(x);
-                if(out.status){
-                    $('#genModal .modal-body').html(out.list);
-                    $('#genModal .modal-title').html("Invoice Items");
-                }
-            }
-
-        });
-
-        $('#genModal').modal('show');
-    }
-
-    $('#po_print').hide();
-
-function get_print_html(inv_code,img,template){
-    $.ajax ({
-        url: 'assets/'+template+'.php',
-        type: 'post',
-        async :false,
-        data: {
-            inv_code:inv_code,
-        },
-        //dataType: 'json',
-        success:function(response){
-            if(response!=0 || response!=""){
-                $('#po_print').html(response);
-                $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
-
-            }else{
-                alert('Something went wrong');
-            }
-        }
-
-    });
-}
-var beforePrint = function () {
-    $('#po_print').show();
-};
-
-var afterPrint = function () {
-    location.reload();
-    $('#po_print').hide();
-
-};
-
-function printContent(el){
-    var id= $(el).attr('data-id');
-    var code= $(el).attr('data-code');
-    var img= $(el).attr('data-img');
-    var template = $(el).attr('data-template');
-    get_print_html(code,img,template);
-
-    window.onbeforeprint = beforePrint;
-    window.onafterprint = afterPrint;
-    var restorepage = $('body').html();
-    var printcontent = $('#' + id).clone();
-    $('body').empty().html(printcontent);
-    window.print();
-    $('body').html(restorepage);
-}
-
-
 </script>
-<?php
-include('footer.php');
-?>
+<?php include('footer.php'); ?>

@@ -25,7 +25,9 @@ function get_itemDetails($dbcon,$code){
     $result = mysqli_query($dbcon,$sql);
     $row =$result-> fetch_assoc();
 
-    return "[".$row['itemcode']."]  ".$row['itemname']."<br/> HSN : ".$row['hsncode'];
+    $ret = "[".$row['itemcode']."]  ".$row['itemname']."&nbsp;|&nbsp; HSN : ".$row['hsncode']."&nbsp;|&nbsp;";
+    $ret.=  "GST@ ".($row['taxrate']/1)."%";
+    return $ret;
 }
 function convertNumberToWord($num = false)
 {
@@ -83,9 +85,9 @@ function convertNumberToWord($num = false)
         </style>
     </head>
     <body>
-        <h5 >
+        <h5>
 
-            <div style="text-align:center">GOODS RECIEPT NOTE</div>
+        <div style="text-align:center">GOODS RECIEPT NOTE</div>
         </h5>
 
         <table class="p_table" width="100%" style="border:1px solid #000;padding:10px;">
@@ -117,6 +119,9 @@ function convertNumberToWord($num = false)
                             <tr>
                                 <td style="padding:5px;">Payment Term: <b><?php echo $row['grn_po_payterm']>1?$row['grn_po_payterm']."days":$row['grn_po_payterm'].' day'; ?></b></td> 
                             </tr>    
+                            <tr>
+                                <td style="padding:5px;"><b>Due Date: </b><?php echo $row['grn_po_payterm']>1? Date('d/m/Y', strtotime("+".$row['grn_po_payterm']." days")) : date("d/m/Y")  ?></td> 
+                            </tr> 
                         </table>
 
                     </td>
@@ -239,25 +244,11 @@ function convertNumberToWord($num = false)
                                                 Total
                                             </td>
                                             <td style="text-align:center;padding:10px;border-bottom:1px solid #000;"> 
-                                                <?php echo nf(get_grandtotal($grn_po_items_arr));?>
+                                                <?php echo nf(get_total_notax($grn_po_items_arr));?>
                                             </td>
                                         </tr>
-                                        <?php
-                                        for($i=0;$i<count($grn_po_items_arr);$i++){
-                                        ?>
-                                        <tr>
-                                            <td width="60%" style="text-align:center;border:0px solid #000;padding:10px;">
-                                                <?php echo get_taxtype($grn_po_items_arr[$i]); ?>
-                                            </td>
-                                            <td style="text-align:center;padding:10px;">
-                                                <?php echo get_taxvals($grn_po_items_arr[$i]);
-                                                ?>
+                                        <?php echo get_taxtype($grn_po_items_arr); ?>
 
-                                            </td>
-                                        </tr>
-                                        <?php
-                                        }
-                                        ?>
                                     </tbody>
                                 </table>
                             </td>

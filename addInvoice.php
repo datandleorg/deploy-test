@@ -97,6 +97,13 @@ include('header.php');
                                     </div>
                                 </div>
 
+                                <div class="form-row" id="inv_code_row" style="display:none;">
+                                    <div class="form-group col-md-6">
+                                        <label for="inputState">Invoice No#</label>
+                                        <input type="text" placeholder="Invoice No" name="inv_code" id="inv_code" class="form-control form-control-sm"> 
+                                    </div>
+                                </div>
+
                                 <div class="form-row">
                                     <div class="form-group col-md-4">									
                                         <label><span class="text-danger">Invoice Date*</span></label>
@@ -334,7 +341,8 @@ include('header.php');
                                         <td><input id="price" type="text" name="price" placeholder="Rate/Qty" onkeypress="sales_rowitem.update_math_vals();"   onkeyup="sales_rowitem.update_math_vals();"   data-id="" class="form-control price"></td>
                                         <td><input id="amount" type="text" name="amount" placeholder="qtyXprice" data-id="" class="form-control amount"></td>
                                         <!-- <td><input type="text" name="discount[]" class="form-control discount" placeholder="Itm wise Disc"></td> -->
-                                        <td>                       <select class="form-control amount" id="taxname"  onchange="sales_rowitem.update_math_vals();"; name="taxname" style="line-height:1.5;">
+                                        <td>             
+                                                  <select class="form-control amount" id="taxname"  onchange="sales_rowitem.update_math_vals();"; name="taxname" style="line-height:1.5;">
                                             <option data-type="single" value="0" selected>Open Taxrate</option>
                                             <?php 
 
@@ -445,7 +453,7 @@ include('header.php');
                                             &nbsp;&nbsp;&nbsp;&nbsp; <button class="btn btn-primary" type="submit" >
                                             Submit
                                             </button>
-                                            <button type="reset" name="cancel" class="btn btn-secondary m-l-5">
+                                            <button type="reset" name="cancel" class="btn btn-secondary m-l-5" onclick="window.history.back();">
                                                 Cancel
                                             </button>
                                         </div>
@@ -631,6 +639,9 @@ include('header.php');
                 if(page_inv_code!=""&&page_action=="edit"){
                     var edit_data = Page.get_edit_vals(page_inv_code,page_table,"inv_code");
                     set_form_data(edit_data);
+                    $('#inv_code_row').show();
+                    console.log(edit_data);
+                    $('#inv_code_row #inv_code').val(edit_data.inv_code);
                 }else if(page_so_code!=""&&page_action=="add"){
                     var edit_data2 = Page.get_edit_vals(page_so_code,"salesorders","so_code");
                     $('#inv_so_code').val(edit_data2.so_code);
@@ -829,7 +840,7 @@ include('header.php');
                 var indexed_array = {};
 
                 $.map(unindexed_array, function(n, i){
-                    if(n['name']=="itemcode"||n['name']=="hsncode"||n['name']=="qty"||n['name']=="unit"||n['name']=="price"||n['name']=="amount"||n['name']=="taxname"||n['name']=="uom"){
+                    if(n['name']=="itemcode"||n['name']=="inv_code"||n['name']=="hsncode"||n['name']=="qty"||n['name']=="unit"||n['name']=="price"||n['name']=="amount"||n['name']=="taxname"||n['name']=="uom"){
 
                     }else{
                         indexed_array[n['name']] = n['value'];
@@ -841,30 +852,46 @@ include('header.php');
             }
             var today = new Date();
             var yy = today.getFullYear().toString();
-            yy = yy.substring(yy.length -2)
             var mm = today.getMonth() + 1;
 
             mm = mm < 10 ? '0' + mm : '' + mm;
             //  console.log(mm+""+yy.slice(-2)) 
-            var dateValue = mm+""+yy
+            var dateValue = mm+"/"+yy
             data.table = "invoices";
             data.inv_items = JSON.stringify(inv_items);
             data.inv_value = $('#pobaltotal').text(); 
             data.inv_balance_amt = $('#pobaltotal').text(); 
             data.inv_payment_status = "Unpaid"; 
             data.inv_type = "Credit Invoice"; 
-            console.log(data,"jp")
+            //console.log(data,"jp")
+            var newinvcode_val = $('#inv_code_row #inv_code').val();
+            var inv_code_changed = "";
+            var inv_action = "";
+            if(page_action=='edit'){
+                if(newinvcode_val!=page_inv_code){
+                inv_code_changed = newinvcode_val;
+                inv_action = 'add';
+                }else{
+                    inv_code_changed = page_inv_code;
+                    inv_action = 'edit';
+                }
+
+            }else{
+                inv_action = "add";
+            }
+
             if (sales_rowitem.sales_entry){
 
                 $.ajax ({
                     url: 'workers/setters/save_inv.php',
                     type: 'post',
                     data: {
-                                      array : JSON.stringify(data),
-                                inv_code    : page_inv_code,
-                                    action  :   page_action?page_action:"add",table:"invoices",                    
+                        array : JSON.stringify(data),
+                        inv_code    : inv_code_changed,
+                        action  :   inv_action,
+                        table:"invoices",                    
                         changed_row_qty     : changed_row_qty,
-                                prefix      :   dateValue,
+                        prefix      :   dateValue,
                         changed_item_select : JSON.stringify(changed_item_select)
                     },
                     dataType: 'json',
