@@ -681,8 +681,7 @@ include('header.php');
                     },
                     dataType: 'json',
                     success:function(response){
-                    //   location.href="listInvoices.php";
-
+                       location.href="listInvoices.php";
                     }
                 });
             }

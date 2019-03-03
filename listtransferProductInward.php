@@ -81,7 +81,7 @@
   <div class="dropdown-menu">
       <a class="dropdown-item" href="#" onclick="load_items_view(this);"  data-code="'.$row['stk_mov_id'].'"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp; View Items</a>';
 
-                                                echo ' <a class="dropdown-item" href="#" onclick="printContent(this);"  data-id="po_print" data-code="'.$row['stk_mov_id'].'" data-img="assets/images/logo.jpg"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
+                                                echo ' <a class="dropdown-item" href="#" onclick="printContent(this);"  data-id="po_print" data-code="'.$row['stk_mov_id'].'" data-img="assets/images/logo.png"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
                                                 echo '
     <a class="dropdown-item" href="transferProductInward.php?stk_mov_id=' . $row['stk_mov_id'] . '&action=edit&type=stock_movement"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit</a>';      
 

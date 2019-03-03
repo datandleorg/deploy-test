@@ -300,7 +300,9 @@ include('workers/getters/functions.php');
         table.buttons().container()
             .appendTo( '#po_reports_div');
 
-
+            table
+            .order( [ 2, 'desc' ] )
+            .draw();
     });
 
     function get_cp_reports(){

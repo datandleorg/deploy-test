@@ -87,7 +87,7 @@
                                         <?php
 
 
-                                                echo '<td><a class="btn btn-light btn-sm hidden-md" onclick="printContent(this);" data-img="'.$row2['image'].'" data-code="'.$row['payment_id'].'"  data-id="po_print">
+                                                echo '<td><a class="btn btn-light btn-sm hidden-md" onclick="printContent(this);" data-img="assets/images/logo.png" data-code="'.$row['payment_id'].'"  data-id="po_print">
 														<i class="fa fa-print" aria-hidden="true"></i></a>
                                                       ';
                                                 //                                                <a href="addVendorPayments.php?payment_id=' . $row['payment_id'] . '&action=edit&type=payments" class="btn btn-primary btn-sm" data-target="#modal_edit_user_5">

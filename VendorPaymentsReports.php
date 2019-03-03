@@ -109,7 +109,7 @@ include('workers/getters/functions.php');
                                                 <td>'.nf($row['payment_amount']).'</td>
                                                 <td><a class="btn btn-light btn-sm hidden-md" 
                                                 onclick="printContent(this);" 
-                                                data-img="assets/images/dhirajLogo.png" 
+                                                data-img="assets/images/logo.png" 
                                                 data-code="'.$row['payment_id'].'"  
                                                 data-id="po_print">
                                                 <i class="fa fa-print" aria-hidden="true"></i></td>

@@ -119,7 +119,7 @@
 
   </button>
   <div class="dropdown-menu">
-    <a class="dropdown-item"  href="#" onclick="printContent(this);" data-template="vocher" data-code="'.$row['id'].'" data-img="assets/images/logo.jpg"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>   <a class="dropdown-item"  href="#" onclick="printContent(this);" data-template="dc_print" data-code="'.$row['id'].'" data-img="assets/images/logo.jpg"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; DC Print</a>';
+    <a class="dropdown-item"  href="#" onclick="printContent(this);" data-template="vocher" data-code="'.$row['id'].'" data-img="assets/images/logo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>   <a class="dropdown-item"  href="#" onclick="printContent(this);" data-template="dc_print" data-code="'.$row['id'].'" data-img="assets/images/logo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; DC Print</a>';
 											
 
                                                

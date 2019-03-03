@@ -27,11 +27,11 @@ if (isset($_POST['array'])) {
             $return['inv_owner'] = $inv_owner;
 
             
-            $inv_val_arr = findbyand($dbcon,$inv_code,$table,"inv_code");
+            // $inv_val_arr = findbyand($dbcon,$inv_code,$table,"inv_code");
 
-            if($inv_val_arr['values'][0]['inv_so_code']!=""){
-                $return = updatebyand($dbcon,"Invoiced","salesorders","so_status","so_code",$inv_val_arr['values'][0]['inv_so_code']);  
-            }
+            // if($inv_val_arr['values'][0]['inv_so_code']!=""){
+            //     $return = updatebyand($dbcon,"Invoiced","salesorders","so_status","so_code",$inv_val_arr['values'][0]['inv_so_code']);  
+            // }
 
             $obj = json_decode($array, true);
             $items = json_decode($obj['inv_items'], true);               

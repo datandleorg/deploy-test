@@ -87,7 +87,7 @@
 
   </button>
   <div class="dropdown-menu">
-    <a class="dropdown-item" href="#" onclick="printContent(this);"  data-id="po_print" data-code="'.$row['v_credits_id'].'" data-img="assets/images/logo.jpg"> <i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
+    <a class="dropdown-item" href="#" onclick="printContent(this);"  data-id="po_print" data-code="'.$row['v_credits_id'].'" data-img="assets/images/logo.png"> <i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
                                                 if($row['v_credits_availcredits']>0){
                                                     echo '
     <a class="dropdown-item" href="addVendorCredits.php?v_credits_id=' . $row['v_credits_id'] . '&action=edit&type=vendorcredits"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit</a>';      

@@ -119,7 +119,7 @@
 
   </button>
   <div class="dropdown-menu">';
-                                                echo '     <a class="dropdown-item"  href="#" onclick="printContent(this);" data-code="'.$row['est_code'].'" data-img="assets/images/logo.jpg"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
+                                                echo '     <a class="dropdown-item"  href="#" onclick="printContent(this);" data-code="'.$row['est_code'].'" data-img="assets/images/logo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
 
                                                 if($row['est_status']=="Created"){
                                                     echo ' <a class="dropdown-item" href="addEstimate.php?est_code=' . $row['est_code'] . '&action=edit&type=estimates" class="btn btn-primary btn-sm" data-target="#modal_edit_user_5"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit</a>';   

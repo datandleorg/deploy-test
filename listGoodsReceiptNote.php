@@ -136,7 +136,7 @@ include('header.php');
 
   </button>
   <div class="dropdown-menu">';
-                                                echo ' <a class="dropdown-item" href="#" onclick="printContent(this);" data-img="assets/images/dhirajLogo.png" data-id="po_print" data-code="'.$row['grn_id'].'"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
+                                                echo ' <a class="dropdown-item" href="#" onclick="printContent(this);" data-img="assets/images/logo.png" data-id="po_print" data-code="'.$row['grn_id'].'"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
 
                                                 if($row['grn_payment_status']=='Unpaid'){
 

@@ -112,7 +112,7 @@
 
   </button>
   <div class="dropdown-menu">
-    <a class="dropdown-item"  href="#" onclick="printContent(this);" data-code="'.$row['so_code'].'" data-img="assets/images/dhirajLogo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
+    <a class="dropdown-item"  href="#" onclick="printContent(this);" data-code="'.$row['so_code'].'" data-img="assets/images/logo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
 
                                                 if($row['so_status']=="Created"){
                                                     echo ' <a class="dropdown-item" href="addSalesOrder.php?so_code=' . $row['so_code'] . '&action=edit&type=salesorders" class="btn btn-primary btn-sm" data-target="#modal_edit_user_5"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit</a>';   

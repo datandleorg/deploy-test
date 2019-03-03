@@ -132,7 +132,7 @@ function convertNumberToWord($num = false)
                             </tr>   
                             <tr>
                                 <td style="padding:5px;">
-                                    Due Date: <b><?php echo $row['inv_payterm']>1? Date('d/m/yyyy', strtotime("+".$row['inv_payterm']." days")) : date("d/m/yyyy")  ?></b>
+                                    Due Date: <b><?php echo $row['inv_payterm']>1? Date('d/m/Y', strtotime("+".$row['inv_payterm']." days")) : date("d/m/Y")  ?></b>
                                 </td> 
                                
                             </tr>   

@@ -162,7 +162,7 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                                 <td>'.nf($row['inv_balance_amt']).'</td>
                                                 <td>
                                                 <a class="btn btn-default" href="#" onclick="printContent(this);" data-template="sales_credit_inv" 
-                                                data-img="assets/images/dhirajLogo.png" data-id="po_print" data-code="'.$row['inv_code'].'">
+                                                data-img="assets/images/logo.png" data-id="po_print" data-code="'.$row['inv_code'].'">
                                                 <i class="fa fa-print" 
                                                 aria-hidden="true"></i></a></td>
 
@@ -362,6 +362,10 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
 
         table.buttons().container()
             .appendTo( '#po_reports_div');
+
+            table
+            .order( [ 3, 'desc' ] )
+            .draw();
 
 
     });

@@ -155,7 +155,7 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                                 <td>'.nf((get_total($grn_po_items_arr))-$row['grn_balance']).'</td>
                                                 <td>'.nf($row['grn_balance']).'</td>
                                                 <td> <a class="btn btn-default" onclick="printContent(this);" 
-                                                 data-img="assets/images/dhirajLogo.png" data-id="po_print" data-code="'.$row['grn_id'].'">
+                                                 data-img="assets/images/logo.png" data-id="po_print" data-code="'.$row['grn_id'].'">
                                                  <i class="fa fa-print" 
                                                  aria-hidden="true"></i></a></td>
                                             </tr>';  

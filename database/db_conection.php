@@ -8,7 +8,7 @@
 
 $dbcon=mysqli_connect("localhost","root","");
 
-mysqli_select_db($dbcon,"dhirajtrial");
+mysqli_select_db($dbcon,"dhirajnew");
 
 //$dbcon=mysqli_connect("localhost","daplDev","daplDev");
 //mysqli_select_db($dbcon,"daplDev");
