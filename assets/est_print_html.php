@@ -2,9 +2,9 @@
 include("../database/db_conection.php");//make connection here
 include("../workers/getters/functions.php");//make connection here
 
-if(isset($_POST['est_code']))
+if(isset($_GET['est_code']))
 {
-    $est_code = $_POST['est_code'];
+    $est_code = $_GET['est_code'];
 
     $sql = "SELECT * from estimates where est_code = '$est_code' ";
     $result = mysqli_query($dbcon,$sql);
@@ -85,15 +85,18 @@ function convertNumberToWord($num = false)
 <html>
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+        <title>Estimate print</title>
         <style type="text/css">
             .p_table{
                 border:1px soid #000;
             }
         </style>
-    </head>
-    <body>
-        <h5 >
+        <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 
+    </head>
+    <body onload="printInit();">
+        <h5 >
+        <img src="images/logo.png" width="50px" height="50px"/>
             <div style="text-align:center">SALES ESTIMATE</div>
         </h5>
 
@@ -171,11 +174,11 @@ function convertNumberToWord($num = false)
                                 <?php echo $est_items_arr[$i]->rwqty." ".$est_items_arr[$i]->uom ;?>
 
                             </td>    
-                            <td style="padding:10px;padding-left:5%;border-right:1px solid #000;">
+                            <td style="padding:10px;padding-left:1%;border-right:1px solid #000;">
                                 <?php echo nf($est_items_arr[$i]->rwprice);?>
 
                             </td>    
-                            <td style="padding:10px;padding-left:5%;border-right:1px solid #000;">
+                            <td style="padding:10px;padding-left:3%;border-right:1px solid #000;">
                                 <?php echo nf($est_items_arr[$i]->rwamt);?>
 
                             </td>
@@ -334,3 +337,21 @@ function convertNumberToWord($num = false)
                 </table>
             </tbody>
         </table>
+        <script>
+
+function printInit(){
+window.print();
+window.onbeforeprint = beforePrint;
+window.onafterprint = afterPrint;
+
+}
+
+         
+    var beforePrint = function () {
+        // alert('start');
+     };
+
+     var afterPrint = function () {
+         window.history.back();
+     };
+</script>

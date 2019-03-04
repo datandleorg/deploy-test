@@ -108,7 +108,7 @@ include('workers/getters/functions.php');
                                                 <td>'.nf((get_total($grn_po_items_arr))-nf(get_total_notax($grn_po_items_arr))).'</td>
                                                 <td>'.nf($row['payment_amount']).'</td>
                                                 <td><a class="btn btn-light btn-sm hidden-md" 
-                                                onclick="printContent(this);" 
+                                                onclick="ToPrint(this);" 
                                                 data-img="assets/images/logo.png" 
                                                 data-code="'.$row['payment_id'].'"  
                                                 data-id="po_print">
@@ -138,10 +138,7 @@ include('workers/getters/functions.php');
 
                         </div>
                     </div><!-- end card-->
-                    <div id="po_print" style="display:;">
-
-
-</div>
+      
                 </div>
             </div>
         </div>
@@ -301,54 +298,10 @@ include('workers/getters/functions.php');
         $('#daterange').attr('readonly',true); 
         $("#reset-date").show();
     }
-
-    $('#po_print').hide();
-
-function get_print_html(payment_id,img){
-    $.ajax ({
-        url: 'assets/payment_print_html.php',
-        type: 'post',
-        async :false,
-        data: {
-            payment_id:payment_id,
-        },
-        //dataType: 'json',
-        success:function(response){
-            if(response!=0 || response!=""){
-                $('#po_print').html(response);
-                $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
-            }else{
-                alert('Something went wrong');
-            }
-        }
-
-    });
-}
-var beforePrint = function () {
-    $('#po_print').show();
-};
-
-var afterPrint = function () {
-    location.reload();
-
-    $('#po_print').hide();
-};
-
-function printContent(el){
-    var id= $(el).attr('data-id');
-    var code= $(el).attr('data-code');
-    var img= $(el).attr('data-img');
-    get_print_html(code,img);
-
-    window.onbeforeprint = beforePrint;
-    window.onafterprint = afterPrint;
-    var restorepage = $('body').html();
-    var printcontent = $('#' + id).clone();
-    $('body').empty().html(printcontent);
-    window.print();
-    $('body').html(restorepage);
-
-}
+    function ToPrint(el){
+                        var code= $(el).attr('data-code');
+                        window.location.href = 'assets/payment_print_html.php?payment_id='+code;
+    }
 
 </script>
 <?php

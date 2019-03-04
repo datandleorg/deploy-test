@@ -87,7 +87,7 @@
 
   </button>
   <div class="dropdown-menu">
-    <a class="dropdown-item" href="#" onclick="printContent(this);"  data-id="po_print" data-code="'.$row['v_credits_id'].'" data-img="assets/images/logo.png"> <i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
+    <a class="dropdown-item" href="#" onclick="ToPrint(this);"  data-id="po_print" data-code="'.$row['v_credits_id'].'" data-img="assets/images/logo.png"> <i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
                                                 if($row['v_credits_availcredits']>0){
                                                     echo '
     <a class="dropdown-item" href="addVendorCredits.php?v_credits_id=' . $row['v_credits_id'] . '&action=edit&type=vendorcredits"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit</a>';      
@@ -126,61 +126,14 @@
 
                         </div>														
                     </div><!-- end card-->	
-                    <div id="po_print" style="display:;">
-
-
-                    </div>
+              
                 </div>
 
 
                 <script>
-                    $('#po_print').hide();
-
-                    function get_print_html(v_credits_id,img){
-                        $.ajax ({
-                            url: 'assets/credits_print_html.php',
-                            type: 'post',
-                            async :false,
-                            data: {
-                                v_credits_id:v_credits_id,
-                            },
-                            //dataType: 'json',
-                            success:function(response){
-                                if(response!=0 || response!=""){
-                                    $('#po_print').html(response);
-                                    $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
-
-                                }else{
-                                    alert('Something went wrong');
-                                }
-                            }
-
-                        });
-                    }
-                    var beforePrint = function () {
-                        $('#po_print').show();
-                    };
-
-                    var afterPrint = function () {
-                        location.reload();
-
-                        $('#po_print').hide();
-                    };
-
-                    function printContent(el){
-                        var id= $(el).attr('data-id');
+                      function ToPrint(el){
                         var code= $(el).attr('data-code');
-                        var img= $(el).attr('data-img');
-                        get_print_html(code,img);
-
-                        window.onbeforeprint = beforePrint;
-                        window.onafterprint = afterPrint;
-                        var restorepage = $('body').html();
-                        var printcontent = $('#' + id).clone();
-                        $('body').empty().html(printcontent);
-                        window.print();
-                        $('body').html(restorepage);
-
-                    }
+                        window.location.href = 'assets/credits_print_html.php?v_credits_id='+code;
+                     }
                 </script>
                 <?php include('footer.php'); ?>

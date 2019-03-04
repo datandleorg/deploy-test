@@ -108,7 +108,7 @@
 
   </button>
   <div class="dropdown-menu">
-    <a class="dropdown-item"  href="#" onclick="printContent(this);" data-code="'.$row['po_code'].'" data-img="assets/images/logo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
+    <a class="dropdown-item"  href="#" onclick="ToPrint(this);" data-code="'.$row['po_code'].'" data-img="assets/images/logo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
 
                                                 if($row['po_status']=="Created"){
                                                     echo ' <a class="dropdown-item" href="addPurchaseOrder.php?po_code=' . $row['po_code'] . '&action=edit&type=purchaseorders" class="btn btn-primary btn-sm" data-target="#modal_edit_user_5"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit</a>';   
@@ -175,61 +175,17 @@
 
                         </div>														
                     </div><!-- end card-->	                    
-                    <div id="po_print" style="display:;">
+                    <div id="po_print" style="display:none;">
                     </div>
                 </div>
 
 
                 <script>
-                    $('#po_print').hide();
 
-                    function get_print_html(po_code,img){
-                        $.ajax ({
-                            url: 'assets/po_print_html.php',
-                            type: 'post',
-                            async :false,
-                            data: {
-                                po_code:po_code,
-                            },
-                            //dataType: 'json',
-                            success:function(response){
-                                if(response!=0 || response!=""){
-                                    $('#po_print').html(response);
-                                    //   $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
-
-                                }else{
-                                    alert('Something went wrong');
-                                }
-                            }
-
-                        });
-                    }
-                    var beforePrint = function () {
-                        $('#po_print').show();
-                    };
-
-                    var afterPrint = function () {
-                        location.reload();
-
-                        $('#po_print').hide();
-                    };
-
-                    function printContent(el){
-                        var id= $(el).attr('data-id');
-                        var code= $(el).attr('data-code');
-                        var img= $(el).attr('data-img');
-                        get_print_html(code,img);
-
-                        window.onbeforeprint = beforePrint;
-                        window.onafterprint = afterPrint;
-                        var restorepage = $('body').html();
-                        var printcontent = $('#' + id).clone();
-                        $('body').empty().html(printcontent);
-                        window.print();
-                        $('body').html(restorepage);
-
-                    }
-
+                function ToPrint(el){
+                   var code= $(el).attr('data-code');
+                   window.location.href = 'assets/po_print_html.php?po_code='+code;
+                }
                     $(document).ready(function() {
                         // data-tables
                         var table = $('#po_table').DataTable();

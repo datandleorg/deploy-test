@@ -31,23 +31,27 @@ function get_totalval($items_arr){
 }
 
 ?> 
-
 <html>
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+        <title>Stock Movement print</title>
         <style type="text/css">
             .p_table{
                 border:1px soid #000;
             }
         </style>
+        <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
     </head>
-    <body>
+    <body onload="printInit();"> 
         <h5>
+        <img src="images/logo.png" width="50px" height="50px"/>
             <div style="text-align:center">STOCK TRANSFER</div>
         </h5>
 
         <table class="p_table" width="100%" style="border:1px solid #000;padding:10px;">
             <tbody>
+            
                 <tr>
                     <td width="50%" style="border:1px solid #000;padding:10px;">
                         <b>Stock Transfer Detais</b><br/>
@@ -99,11 +103,11 @@ function get_totalval($items_arr){
                                 <?php echo $stk_mov_items_arr[$i]->rwqty." ".$stk_mov_items_arr[$i]->uom ;?>
 
                             </td>    
-                            <td style="padding:10px;padding-left:5%;border-right:1px solid #000;">
+                            <td align="center" style="padding:10px;padding-left:1%;border-right:1px solid #000;">
                                 <?php echo nf($stk_mov_items_arr[$i]->rwprice);?>
 
                             </td>    
-                            <td style="padding:10px;padding-left:5%;border-right:1px solid #000;">
+                            <td style="padding:10px;padding-left:3%;border-right:1px solid #000;">
                                 <?php echo nf($stk_mov_items_arr[$i]->rwqty*$stk_mov_items_arr[$i]->rwprice);?>
 
                             </td>
@@ -198,3 +202,22 @@ function get_totalval($items_arr){
             </tbody>
         </table>
     </body></html>
+
+    <script>
+
+function printInit(){
+window.print();
+window.onbeforeprint = beforePrint;
+window.onafterprint = afterPrint;
+
+}
+
+         
+    var beforePrint = function () {
+        // alert('start');
+     };
+
+     var afterPrint = function () {
+         window.history.back();
+     };
+</script>

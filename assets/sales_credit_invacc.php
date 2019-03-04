@@ -2,9 +2,9 @@
 include("../database/db_conection.php");//make connection here
 include("../workers/getters/functions.php");//make connection here
 
-if(isset($_POST['inv_code']))
+if(isset($_GET['inv_code']))
 {
-    $inv_code = $_POST['inv_code'];
+    $inv_code = $_GET['inv_code'];
 
     $sql = "SELECT * from invoicesacc where inv_code = '$inv_code' ";
     $result = mysqli_query($dbcon,$sql);
@@ -141,14 +141,20 @@ function convertNumberToWordsForIndia($number){
 <html>
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+        <title>Manual Invoice print</title>
         <style type="text/css">
             .p_table{
                 border:1px soid #000;
             }
+
         </style>
+        <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
     </head>
-    <body>
-        <h5 > <div style="text-align:center">DHIRAJ AGRO PRIVATE LIMITED <br>
+    <body onload="printInit();">
+        <h5 > 
+        <img src="images/logo.png" width="50px" height="50px"/>  
+        <div style="text-align:center">DHIRAJ AGRO PRIVATE LIMITED <br>
 		(A Franchisee of Parle Agro Pvt Ltd)</div> </h5>
 		
          <h3>   <div style="text-align:center">INVOICE</div>
@@ -254,11 +260,11 @@ function convertNumberToWordsForIndia($number){
                                 <?php echo $inv_items_arr[$i]->rwqty." ".$inv_items_arr[$i]->uom ;?>
 
                             </td>    
-                            <td style="padding:10px;padding-left:5%;border-right:1px solid #000;">
+                            <td style="padding:10px;padding-left:1%;border-right:1px solid #000;">
                                 <?php echo nf($inv_items_arr[$i]->rwprice);?>
 
                             </td>    
-                            <td style="padding:10px;padding-left:5%;border-right:1px solid #000;">
+                            <td style="padding:10px;padding-left:3%;border-right:1px solid #000;">
                                 <?php echo nf($inv_items_arr[$i]->rwamt);?>
 
                             </td>
@@ -495,3 +501,21 @@ function convertNumberToWordsForIndia($number){
                 </table>
             </tbody>
         </table>
+        <script>
+
+function printInit(){
+window.print();
+window.onbeforeprint = beforePrint;
+window.onafterprint = afterPrint;
+
+}
+
+         
+    var beforePrint = function () {
+        // alert('start');
+     };
+
+     var afterPrint = function () {
+         window.history.back();
+     };
+</script>

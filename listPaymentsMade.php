@@ -87,7 +87,7 @@
                                         <?php
 
 
-                                                echo '<td><a class="btn btn-light btn-sm hidden-md" onclick="printContent(this);" data-img="assets/images/logo.png" data-code="'.$row['payment_id'].'"  data-id="po_print">
+                                                echo '<td><a class="btn btn-light btn-sm hidden-md" onclick="ToPrint(this);" data-img="assets/images/logo.png" data-code="'.$row['payment_id'].'"  data-id="po_print">
 														<i class="fa fa-print" aria-hidden="true"></i></a>
                                                       ';
                                                 //                                                <a href="addVendorPayments.php?payment_id=' . $row['payment_id'] . '&action=edit&type=payments" class="btn btn-primary btn-sm" data-target="#modal_edit_user_5">
@@ -116,60 +116,15 @@
 
                         </div>														
                     </div><!-- end card-->	
-                    <div id="po_print" style="display:;">
-
-
-                    </div>
+            
                 </div>
 
 
                 <script>
-                    $('#po_print').hide();
-
-                    function get_print_html(payment_id,img){
-                        $.ajax ({
-                            url: 'assets/payment_print_html.php',
-                            type: 'post',
-                            async :false,
-                            data: {
-                                payment_id:payment_id,
-                            },
-                            //dataType: 'json',
-                            success:function(response){
-                                if(response!=0 || response!=""){
-                                    $('#po_print').html(response);
-                                    $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
-                                }else{
-                                    alert('Something went wrong');
-                                }
-                            }
-
-                        });
-                    }
-                    var beforePrint = function () {
-                        $('#po_print').show();
-                    };
-
-                    var afterPrint = function () {
-                        location.reload();
-
-                        $('#po_print').hide();
-                    };
-
-                    function printContent(el){
-                        var id= $(el).attr('data-id');
+                    function ToPrint(el){
                         var code= $(el).attr('data-code');
-                        var img= $(el).attr('data-img');
-                        get_print_html(code,img);
-
-                        window.onbeforeprint = beforePrint;
-                        window.onafterprint = afterPrint;
-                        var restorepage = $('body').html();
-                        var printcontent = $('#' + id).clone();
-                        $('body').empty().html(printcontent);
-                        window.print();
-                        $('body').html(restorepage);
-
-                    }
+                        var template= $(el).attr('data-template');
+                        window.location.href = 'assets/payment_print_html.php?payment_id='+code;
+                     }
                 </script>
                 <?php include('footer.php'); ?>

@@ -136,7 +136,7 @@ include('header.php');
 
   </button>
   <div class="dropdown-menu">';
-                                                echo ' <a class="dropdown-item" href="#" onclick="printContent(this);" data-img="assets/images/logo.png" data-id="po_print" data-code="'.$row['grn_id'].'"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
+                                                echo ' <a class="dropdown-item" href="#" onclick="ToPrint(this);" data-img="assets/images/logo.png" data-id="po_print" data-code="'.$row['grn_id'].'"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
 
                                                 if($row['grn_payment_status']=='Unpaid'){
 
@@ -190,68 +190,15 @@ include('header.php');
 
                         </div>														
                     </div><!-- end card-->	
-                    <div id="po_print" style="display:;">
-
-
-                    </div>
+        
                 </div>
 
 
                 <script>
-                    $('#po_print').hide();
-
-                    function get_print_html(grn_id,img){
-                        $.ajax ({
-                            url: 'assets/grn_print_html.php',
-                            type: 'post',
-                            async :false,
-                            data: {
-                                grn_id:grn_id
-                            },
-                            //dataType: 'json',
-                            success:function(response){
-                                if(response!=0 || response!=""){
-                                    $('#po_print').prepend('<img src="http://localhost/projects/dhiraj/original/dhirajtrial/assets/images/logo.png" width="50px" height="50px"/>');
-                                    $('#po_print').append(response);
-
-                                }else{
-                                    alert('Something went wrong');
-                                }
-                            }
-
-                        });
-                    }
-                    var beforePrint = function () {
-                        $('#po_print').show();
-                    };
-
-                    var afterPrint = function () {
-                        location.reload();
-
-                        $('#po_print').hide();
-                    };
-
-                    function printContent(el){
-                        var id= $(el).attr('data-id');
+                    function ToPrint(el){
                         var code= $(el).attr('data-code');
-                        var img= $(el).attr('data-img');
-                        get_print_html(code,img);
+                        window.location.href = 'assets/grn_print_html.php?grn_id='+code;
 
-                        window.onbeforeprint = beforePrint;
-                        window.onafterprint = afterPrint;
-                        var restorepage = $('body').html();
-                        var printcontent = $('#' + id).clone();
-                        $('body').empty().html(printcontent);
-                        window.print();
-                        $('body').html(restorepage);
-
-                    }
-                    $(document).ready(function() {
-                        // data-tables
-                        var table = $('#grn_table').DataTable();
-                        table
-                            .order( [ 1, 'desc' ] )
-                            .draw();
-                    });	
+                     }
                 </script>
                 <?php include('footer.php'); ?>

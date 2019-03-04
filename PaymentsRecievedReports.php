@@ -125,9 +125,9 @@ include('workers/getters/functions.php');
                                                 <td>'.nf((get_total($inv_items_arr))-nf(get_total_notax($inv_items_arr))).'</td>
                                                 <td>'.nf($row['cust_payment_amount']).'</td>
                                                 <td><a class="btn btn-light btn-sm hidden-md" 
-                                                onclick="printContent(this);"  
+                                                onclick="ToPrint(this);"  
                                                 data-code="'.$row['cust_payment_id'].'"
-                                                  data-id="po_print">
+                                                  data-id="po_print" data-type="auto">
                                                 <i class="fa fa-print" aria-hidden="true"></i></a></td>
                                             </tr>';  
                                                 }
@@ -154,10 +154,7 @@ include('workers/getters/functions.php');
 
                         </div>
                     </div><!-- end card-->
-                    <div id="po_print" style="display:;">
-
-
-                    </div>
+            
                 </div>
             </div>
         </div>
@@ -325,56 +322,12 @@ include('workers/getters/functions.php');
         $('#daterange').attr('readonly',true); 
         $("#reset-date").show();
     }
-
-    $('#po_print').hide();
-
-function get_print_html(cust_payment_id,img){
-    $.ajax ({
-        url: 'assets/customer_payment_print.php',
-        type: 'post',
-        async :false,
-        data: {
-            cust_payment_id:cust_payment_id,
-            type: 'auto'
-        },
-        //dataType: 'json',
-        success:function(response){
-            if(response!=0 || response!=""){
-                $('#po_print').html(response);
-                $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
-            }else{
-                alert('Something went wrong');
-            }
-        }
-
-    });
-}
-var beforePrint = function () {
-    $('#po_print').show();
-};
-
-var afterPrint = function () {
-    location.reload();
-
-    $('#po_print').hide();
-};
-
-function printContent(el){
-    var id= $(el).attr('data-id');
-    var code= $(el).attr('data-code');
-    var img= $(el).attr('data-img');
-    get_print_html(code,img);
-
-    window.onbeforeprint = beforePrint;
-    window.onafterprint = afterPrint;
-    var restorepage = $('body').html();
-    var printcontent = $('#' + id).clone();
-    $('body').empty().html(printcontent);
-    window.print();
-    $('body').html(restorepage);
-
-}
-
+    function ToPrint(el){
+        var code= $(el).attr('data-code');
+        var type= $(el).attr('data-type');
+        
+        window.location.href = 'assets/customer_payment_print.php?cust_payment_id='+code+'&type='+type;
+    }
 </script>
 <?php
 include('footer.php');

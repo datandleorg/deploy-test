@@ -2,9 +2,9 @@
 include("../database/db_conection.php");//make connection here
 include("../workers/getters/functions.php");//make connection here
 
-if(isset($_POST['payment_id']))
+if(isset($_GET['payment_id']))
 {
-    $payment_id = $_POST['payment_id'];
+    $payment_id = $_GET['payment_id'];
 }
 $sql = "SELECT g.*,p.*,l.*,v.supname,v.address,v.city,v.state,v.country,v.zip,v.gstin,v.mobile,c.orgname,c.image FROM grn_notes g,purchaseorders p,vendorprofile v,comprofile c,payments l
 			WHERE l.payment_id='$payment_id' and l.payment_invoice_no=g.grn_invoice_no
@@ -29,15 +29,20 @@ function get_itemDetails($dbcon,$code){
 <html>
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+        <title>Payment print</title>
         <style type="text/css">
             .p_table{
                 border:1px soid #000;
             }
         </style>
+        <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
     </head>
-    <body>
+    <body onload="printInit();">  
         
-        <h5 > <div style="text-align:center">DHIRAJ AGRO PRIVATE LIMITED <br>
+        <h5 > 
+        <img src="images/logo.png" width="50px" height="50px"/>
+            <div style="text-align:center">DHIRAJ AGRO PRIVATE LIMITED <br>
 		(A Franchisee of Parle Agro Pvt Ltd)</div> </h5>
         <h3><div style="text-align:center">VENDOR PAYMENTS VOUCHER</div></h3> 
        
@@ -172,11 +177,11 @@ function get_itemDetails($dbcon,$code){
                                 <?php echo $grn_po_items_arr[$i]->rwqty." ".!empty($po_items_arr[$i])?$po_items_arr[$i]->uom :"";?>
 
                             </td>    
-                            <td style="padding:10px;padding-left:5%;border-right:1px solid #000;">
+                            <td align="center" style="padding:10px;padding-left:1%;border-right:1px solid #000;">
                                 <?php echo nf($grn_po_items_arr[$i]->rwprice);?>
 
                             </td>    
-                            <td style="padding:10px;padding-left:5%;border-right:1px solid #000;">
+                            <td style="padding:10px;padding-left:3%;border-right:1px solid #000;">
                                 <?php echo nf($grn_po_items_arr[$i]->rwamt);?>
 
                             </td>
@@ -307,3 +312,22 @@ function get_itemDetails($dbcon,$code){
             </tbody>
         </table>
     </body></html>
+
+    <script>
+
+function printInit(){
+window.print();
+window.onbeforeprint = beforePrint;
+window.onafterprint = afterPrint;
+
+}
+
+         
+    var beforePrint = function () {
+        // alert('start');
+     };
+
+     var afterPrint = function () {
+         window.history.back();
+     };
+</script>

@@ -20,7 +20,6 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
     <div class="content">
 
         <div class="container-fluid">
-<?php echo "http://" . $_SERVER['SERVER_NAME'] ; ?>
 
             <div class="row">
                 <div class="col-xl-12">
@@ -154,7 +153,7 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                                 <td>'.nf(get_total($grn_po_items_arr)).'</td>
                                                 <td>'.nf((get_total($grn_po_items_arr))-$row['grn_balance']).'</td>
                                                 <td>'.nf($row['grn_balance']).'</td>
-                                                <td> <a class="btn btn-default" onclick="printContent(this);" 
+                                                <td> <a class="btn btn-default" onclick="ToPrint(this);" 
                                                  data-img="assets/images/logo.png" data-id="po_print" data-code="'.$row['grn_id'].'">
                                                  <i class="fa fa-print" 
                                                  aria-hidden="true"></i></a></td>
@@ -187,8 +186,7 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
 
                         </div>
                     </div><!-- end card-->
-                    <div id="po_print" style="display:;">
-</div>
+                  
                 </div>
             </div>
         </div>
@@ -405,55 +403,12 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
         $("#reset-date").show();
     }
 
-    
-    $('#po_print').hide();
 
-function get_print_html(grn_id,img){
-    $.ajax ({
-        url: 'assets/grn_print_html.php',
-        type: 'post',
-        async :false,
-        data: {
-            grn_id:grn_id
-        },
-        //dataType: 'json',
-        success:function(response){
-            if(response!=0 || response!=""){
-                $('#po_print').html(response);
-                $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
+    function ToPrint(el){
+                        var code= $(el).attr('data-code');
+                        window.location.href = 'assets/grn_print_html.php?grn_id='+code;
 
-            }else{
-                alert('Something went wrong');
-            }
-        }
-
-    });
-}
-var beforePrint = function () {
-    $('#po_print').show();
-};
-
-var afterPrint = function () {
-    location.reload();
-
-    $('#po_print').hide();
-};
-
-function printContent(el){
-    var id= $(el).attr('data-id');
-    var code= $(el).attr('data-code');
-    var img= $(el).attr('data-img');
-    get_print_html(code,img);
-
-    window.onbeforeprint = beforePrint;
-    window.onafterprint = afterPrint;
-    var restorepage = $('body').html();
-    var printcontent = $('#' + id).clone();
-    $('body').empty().html(printcontent);
-    window.print();
-    $('body').html(restorepage);
-
-}
+                     }
 
 
 </script>

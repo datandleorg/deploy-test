@@ -138,7 +138,7 @@
 
   </button>
   <div class="dropdown-menu">
-    <a class="dropdown-item"  href="#" onclick="printContent(this);" data-template="sales_credit_inv" data-code="'.$row['inv_code'].'" data-img="assets/images/logo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>   <a class="dropdown-item"  href="#" onclick="printContent(this);" data-template="dc_print" data-code="'.$row['inv_code'].'" data-img="assets/images/logo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; DC Print</a>';
+    <a class="dropdown-item"  href="#" onclick="ToPrint(this);" data-template="sales_credit_inv" data-code="'.$row['inv_code'].'" data-img="assets/images/logo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>   <a class="dropdown-item"  href="#" onclick="ToPrint(this);" data-template="dc_print" data-code="'.$row['inv_code'].'" data-img="assets/images/logo.png"  data-id="po_print"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; DC Print</a>';
 
 
                                                 if($row['inv_status']=="Created"){
@@ -168,27 +168,6 @@
                                                 echo '    </div></div>';
 
 
-
-
-                                                //                                                echo '    <a class="btn btn-light btn-sm" onclick="printContent(this);" data-code="'.$row['po_code'].'" data-img="'.$row['image'].'"  data-id="po_print">
-                                                //                                                    <i class="fa fa-print" aria-hidden="true"></i></a>';
-                                                //                                                if($row['po_status']=="Created" || $row['po_status']=="Approved"){
-                                                //                                                    echo ' <a href="addPurchaseOrder.php?po_code=' . $row['po_code'] . '&action=edit&type=purchaseorders" class="btn btn-primary btn-sm" data-target="#modal_edit_user_5">'; 
-                                                //
-                                                //                                                    echo '
-                                                //                                                    <i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                                //                                                    <a href="javascript:deleteRecord_8(' . $row['id'] . ');" class="btn btn-danger btn-sm" data-placement="top" data-toggle="tooltip" data-title="Delete">
-                                                //                                                    <i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                                                //                                                    ';
-                                                //                                                }  
-                                                //
-                                                //
-                                                //                                                if($row['po_status']=="Delivered"){
-                                                //                                                    echo '  <a href="addGoodsReceiptNote.php?po_code=' . $row['po_code'] . '&action=add&vendor='.$row['po_vendor'].'" class="btn btn-secondary btn-sm" data-placement="top" data-toggle="tooltip" data-title="Enter GRN">
-                                                //                                                    <i class="fa fa-truck" aria-hidden="true"></i></a>';
-                                                //                                                }
-
-
                                                 echo ' </td>';
                                                 echo "</tr>";
                                             }
@@ -210,65 +189,24 @@
 
                         </div>														
                     </div><!-- end card-->	
-                    <div id="po_print" style="display:;">
-
-
-                    </div>
+        
                 </div>
 
 
                 <script>
-                    $('#po_print').hide();
 
                     var table = $('#listinvoicestable').DataTable();
                     table.order( [ 5, 'desc' ] ).draw();
-                        
-                    function get_print_html(inv_code,img,template){
-                        $.ajax ({
-                            url: 'assets/'+template+'.php',
-                            type: 'post',
-                            async :false,
-                            data: {
-                                inv_code:inv_code,
-                            },
-                            //dataType: 'json',
-                            success:function(response){
-                                if(response!=0 || response!=""){
-                                    $('#po_print').html(response);
-                                    $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
 
-                                }else{
-                                    alert('Something went wrong');
-                                }
-                            }
-
-                        });
-                    }
-                    var beforePrint = function () {
-                        $('#po_print').show();
-                    };
-
-                    var afterPrint = function () {
-                        location.reload();
-                        $('#po_print').hide();
-
-                    };
-
-                    function printContent(el){
-                        var id= $(el).attr('data-id');
+                    function ToPrint(el){
                         var code= $(el).attr('data-code');
-                        var img= $(el).attr('data-img');
-                        var template = $(el).attr('data-template');
-                        get_print_html(code,img,template);
+                        var template= $(el).attr('data-template');
+                            if(template=="sales_credit_inv"){
+                                window.location.href = 'assets/'+template+'.php?inv_code='+code;
 
-                        window.onbeforeprint = beforePrint;
-                        window.onafterprint = afterPrint;
-                        var restorepage = $('body').html();
-                        var printcontent = $('#' + id).clone();
-                        $('body').empty().html(printcontent);
-                        window.print();
-                        $('body').html(restorepage);
-                    }
-
+                            }else{
+                                window.location.href = 'assets/'+template+'.php?inv_code='+code;
+                            }
+                     }
                 </script>
                 <?php include('footer.php'); ?>

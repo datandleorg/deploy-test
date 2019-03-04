@@ -81,7 +81,7 @@
   <div class="dropdown-menu">
       <a class="dropdown-item" href="#" onclick="load_items_view(this);"  data-code="'.$row['stk_mov_id'].'"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp; View Items</a>';
 
-                                                echo ' <a class="dropdown-item" href="#" onclick="printContent(this);"  data-id="po_print" data-code="'.$row['stk_mov_id'].'" data-img="assets/images/logo.png"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
+                                                echo ' <a class="dropdown-item" href="#" onclick="ToPrint(this);"  data-id="po_print" data-code="'.$row['stk_mov_id'].'" data-img="assets/images/logo.png"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>';
                                                 echo '
     <a class="dropdown-item" href="transferProductInward.php?stk_mov_id=' . $row['stk_mov_id'] . '&action=edit&type=stock_movement"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit</a>';      
 
@@ -114,83 +114,16 @@
 
                         </div>														
                     </div><!-- end card-->	
-                    <div id="po_print" style="display:;">
-
-
-                    </div>
+                  
                 </div>
 
 
                 <script>
-                    $('#po_print').hide();
-
-                    function get_print_html(stk_mov_id,img){
-                        $.ajax ({
-                            url: 'assets/stk_mov_print_html.php',
-                            type: 'post',
-                            async :false,
-                            data: {
-                                stk_mov_id:stk_mov_id,
-                            },
-                            //dataType: 'json',
-                            success:function(response){
-                                if(response!=0 || response!=""){
-                                    $('#po_print').html(response);
-                                    $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
-
-                                }else{
-                                    alert('Something went wrong');
-                                }
-                            }
-
-                        });
-                    }
-                    var beforePrint = function () {
-                        $('#po_print').show();
-                    };
-
-                    var afterPrint = function () {
-                        location.reload();
-
-                        $('#po_print').hide();
-                    };
-
-                    function printContent(el){
-                        var id= $(el).attr('data-id');
+                    function ToPrint(el){
                         var code= $(el).attr('data-code');
-                        var img= $(el).attr('data-img');
-                        get_print_html(code,img);
+                        window.location.href = 'assets/stk_mov_print_html.php?stk_mov_id='+code;
 
-                        window.onbeforeprint = beforePrint;
-                        window.onafterprint = afterPrint;
-                        var restorepage = $('body').html();
-                        var printcontent = $('#' + id).clone();
-                        $('body').empty().html(printcontent);
-                        window.print();
-                        $('body').html(restorepage);
-
-                    }
-                    function load_items_view(el){
-                        var id= $(el).attr('data-code');
-                        var stk_mov_data = Page.get_edit_vals(id,"stock_movement","stk_mov_id");
-
-                        $.ajax ({
-                            url: 'workers/getters/get_items_view.php?u_id='+id,
-                            type: 'GET',
-                            async :false,
-                            success:function(x){
-                                var out = JSON.parse(x);
-                                if(out.status){
-                                    $('#genModal .modal-body').html(out.list);
-                                    $('#genModal .modal-title').html("Stock Transfer Items");
-                                }
-                            }
-
-                        });
-
-                        $('#genModal').modal('show');
-
-                    }
+                     }
 
                 </script>
                 <?php include('footer.php'); ?>

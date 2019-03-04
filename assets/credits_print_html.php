@@ -2,9 +2,9 @@
 include("../database/db_conection.php");//make connection here
 include("../workers/getters/functions.php");//make connection here
 
-if(isset($_POST['v_credits_id']))
+if(isset($_GET['v_credits_id']))
 {
-    $v_credits_id = $_POST['v_credits_id'];
+    $v_credits_id = $_GET['v_credits_id'];
 
     $sql = "SELECT c.*,v.supname,v.address,v.city,v.state,v.country,v.zip,v.gstin FROM vendorcredits c,vendorprofile v
 			WHERE c.v_credits_vendorid = v.vendorid and v_credits_id='$v_credits_id'
@@ -18,11 +18,18 @@ if(isset($_POST['v_credits_id']))
 <html>
     <head>
         <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+        <title>Vendor credits print</title>
+        <style type="text/css">
+            .p_table{
+                border:1px soid #000;
+            }
+        </style>
+        <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 
     </head>
-    <body>
+    <body onload="printInit();">  
         <h5 >
-
+        <img src="images/logo.png" width="50px" height="50px"/>
             <div style="text-align:center">VENDOR CREDITS</div>
         </h5>
 
@@ -104,3 +111,22 @@ if(isset($_POST['v_credits_id']))
                 </table>
             </tbody>
         </table>
+
+        <script>
+
+function printInit(){
+window.print();
+window.onbeforeprint = beforePrint;
+window.onafterprint = afterPrint;
+
+}
+
+         
+    var beforePrint = function () {
+        // alert('start');
+     };
+
+     var afterPrint = function () {
+         window.history.back();
+     };
+</script>

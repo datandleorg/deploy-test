@@ -161,7 +161,7 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
                                                 <td>'.nf((get_total($inv_items))-$row['inv_balance_amt']).'</td>
                                                 <td>'.nf($row['inv_balance_amt']).'</td>
                                                 <td>
-                                                <a class="btn btn-default" href="#" onclick="printContent(this);" data-template="sales_credit_inv" 
+                                                <a class="btn btn-default" href="#" onclick="ToPrint(this);" data-template="sales_credit_inv" 
                                                 data-img="assets/images/logo.png" data-id="po_print" data-code="'.$row['inv_code'].'">
                                                 <i class="fa fa-print" 
                                                 aria-hidden="true"></i></a></td>
@@ -194,10 +194,7 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
 
                         </div>
                     </div><!-- end card-->
-                    <div id="po_print" style="display:;">
-
-
-</div>
+              
                 </div>
             </div>
         </div>
@@ -416,55 +413,15 @@ function payment_status($payment_status,$newdate,$po_payterm,$grn_date){
         $('#genModal').modal('show');
     }
 
-    $('#po_print').hide();
 
-function get_print_html(inv_code,img,template){
-    $.ajax ({
-        url: 'assets/'+template+'.php',
-        type: 'post',
-        async :false,
-        data: {
-            inv_code:inv_code,
-        },
-        //dataType: 'json',
-        success:function(response){
-            if(response!=0 || response!=""){
-                $('#po_print').html(response);
-                $('#po_print').prepend('<img src="'+img+'" width="50px" height="50px"/>');
 
-            }else{
-                alert('Something went wrong');
-            }
-        }
-
-    });
-}
-var beforePrint = function () {
-    $('#po_print').show();
-};
-
-var afterPrint = function () {
-    location.reload();
-    $('#po_print').hide();
-
-};
-
-function printContent(el){
-    var id= $(el).attr('data-id');
-    var code= $(el).attr('data-code');
-    var img= $(el).attr('data-img');
-    var template = $(el).attr('data-template');
-    get_print_html(code,img,template);
-
-    window.onbeforeprint = beforePrint;
-    window.onafterprint = afterPrint;
-    var restorepage = $('body').html();
-    var printcontent = $('#' + id).clone();
-    $('body').empty().html(printcontent);
-    window.print();
-    $('body').html(restorepage);
-}
-
+    function ToPrint(el){
+                        var code= $(el).attr('data-code');
+                        var template= $(el).attr('data-template');
+                            if(template=="sales_credit_inv"){
+                                window.location.href = 'assets/'+template+'.php?inv_code='+code;
+                            }
+                     }
 
 </script>
 <?php
