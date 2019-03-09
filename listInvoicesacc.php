@@ -37,7 +37,7 @@
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="example12324" class="table table-bordered table-hover display">
+                                <table id="invoicesacc" class="table table-bordered table-hover display">
                                     <thead>
                                         <tr>
                                             <th style="display:none;">Id#</th>												
@@ -187,7 +187,9 @@
 
 
                 <script>
-                  
+                      var table = $('#invoicesacc').DataTable();
+                    table.order( [ 4, 'desc' ] ).draw();
+
                   function ToPrint(el){
                         var code= $(el).attr('data-code');
                         var template= $(el).attr('data-template');

@@ -43,7 +43,7 @@
                                 <table id="example1" class="table table-bordered table-hover display">
                                     <thead>
                                         <tr>
-                                            <!--th style="display:none;">Id#</th-->												
+                                            <th style="display:none;">Id#</th>												
                                             <th style="width:50px">Transaction#</th>												
                                             <th style="width:3000px">Date</th>												
                                             <th style="width:200px">Bank</th>
@@ -74,42 +74,16 @@
                                                 echo '<td>'.$row['payment_invoice_no'].' </td>';
                                                 echo '<td>'.$row['payment_mode'].' </td>';
                                                 echo '<td>'.$row['payment_amount'].' </td>';
-
-                                                $sql2 = "SELECT g.*,p.*,l.*,v.supname,v.address,v.city,v.state,v.country,v.zip,v.gstin,c.orgname,c.image FROM grn_notes g,purchaseorders p,vendorprofile v,comprofile c,payments l
-			WHERE g.grn_po_code = p.po_code AND p.po_vendor=v.vendorid AND p.po_comp_code=c.orgid and payment_id='".$row['payment_id']."' and l.payment_invoice_no=g.grn_invoice_no
-			ORDER BY p.id DESC";
-                                                $result2 = mysqli_query($dbcon,$sql2);
-                                                $row2 =$result2-> fetch_assoc();
-                                                //print_r($row2);
-                                        ?>
-
-
-                                        <?php
-
-
-                                                echo '<td><a class="btn btn-light btn-sm hidden-md" onclick="ToPrint(this);" data-img="assets/images/logo.png" data-code="'.$row['payment_id'].'"  data-id="po_print">
-														<i class="fa fa-print" aria-hidden="true"></i></a>
+                                                echo '<td><a class="btn btn-light btn-sm hidden-md" 
+                                                     onclick="ToPrint(this);" data-img="assets/images/logo.png"
+                                                      data-code="'.$row['payment_id'].'"  data-id="po_print">
+														<i class="fa fa-print" aria-hidden="true"></i></a></td>
                                                       ';
-                                                //                                                <a href="addVendorPayments.php?payment_id=' . $row['payment_id'] . '&action=edit&type=payments" class="btn btn-primary btn-sm" data-target="#modal_edit_user_5">
-
-                                                /*
-														<i class="fa fa-pencil" aria-hidden="true"></i></a>
-*/
-
-                                                echo ' </td>';
                                                 echo "</tr>";
                                             }
                                         }
                                         ?>						
-                                        <script>
-                                            function deleteRecord_8(RecordId)
-                                            {
-                                                if (confirm('Confirm delete')) {
-                                                    window.location.href = 'deletepayments.php?id='+RecordId;
-                                                }
-                                            }
-                                        </script>
-
+                                   
                                     </tbody>
                                 </table>
                             </div>
@@ -121,6 +95,10 @@
 
 
                 <script>
+                   //var table = $('#pmade').DataTable();
+                   //console.log(table,"sss");
+                   // table.order( [ 1, 'desc' ] ).draw();
+
                     function ToPrint(el){
                         var code= $(el).attr('data-code');
                         var template= $(el).attr('data-template');

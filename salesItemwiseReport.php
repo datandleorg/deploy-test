@@ -75,6 +75,7 @@ function getSaleItemCount($getArr, $itemCodeId) {
                                         <option value="Unpaid">Unpaid</option>
                                         <option value="Partially Paid">Partially Paid</option>
                                         <option value="Overdue">Overdue</option>
+                                        <option value="Paid">Paid</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-2">
@@ -117,7 +118,7 @@ function getSaleItemCount($getArr, $itemCodeId) {
                                                 $end = date('Y-m-d', $timestamp);
                                                 $custwise = $_GET['custwise'];
                                                 $pstatuswise = $_GET['pstatuswise'];
-                                                $sql = "SELECT * from invoices i,customerprofile c where 1=1  ";
+                                                $sql = "SELECT * from (select * from invoices union select * from invoicesacc ) i,customerprofile c where 1=1  ";
                                                 if($_GET['st']!=''){
                                                     if($st==$end){
                                                         $sql.= " and i.inv_date='$st' ";   
@@ -138,7 +139,7 @@ function getSaleItemCount($getArr, $itemCodeId) {
                                                 $sql.=" and i.inv_customer=c.custid and i.inv_balance_amt>0;";    
 
                                             }else{
-                                                $sql = "SELECT * from invoices i,customerprofile c where i.inv_customer=c.custid and i.inv_balance_amt>0;";    
+                                                $sql = "SELECT * from (select * from invoices union select * from invoicesacc ) i,customerprofile c where i.inv_customer=c.custid and i.inv_balance_amt>0;";    
                                             }
                                             $result = mysqli_query($dbcon,$sql);
                                             if ($result->num_rows > 0){

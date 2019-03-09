@@ -1,6 +1,6 @@
 <?php
 include("database/db_conection.php");//make connection here
-$baseurl =  "http://" . $_SERVER['SERVER_NAME'] ."/dhirajpro/"; //Outputs www.example.com
+$baseurl =  "http://" . $_SERVER['SERVER_NAME'] ."/"; //Outputs www.example.com
 
 session_start();
 //include('login.php'); // Includes Login Script

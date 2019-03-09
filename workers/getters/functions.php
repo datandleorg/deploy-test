@@ -28,7 +28,6 @@ function getamt_total($arr){
             $taxableamt=  ($items[$i]['rwqty']*$items[$i]['rwprice'])*(100/(100+$items[$i]['tax_val']));
             $ttax+=  $taxableamt*($items[$i]['tax_val']/100);
             $amt+=  $taxableamt + $ttax; 
-
         }
     }
 

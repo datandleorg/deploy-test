@@ -27,6 +27,31 @@
         </div>
     </div>
 </div>
+<div class="modal fade custom-modal" id="hsnModal" tabindex="-1" role="dialog" aria-labelledby="hsnModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Add New HSN code</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="#" enctype="multipart/form-data" method="post">
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="addhsn"  id="addhsn"  placeholder="Add HSN code">
+                    </div>		
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" name="submithsncode" id="submithsncode" class="btn btn-primary">Save and Associate</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="content-page">
 
     <!-- Start content -->
@@ -74,7 +99,11 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label>Item Name<span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control form-control-sm" name="itemname" id="itemname" placeholder="Product Name" required class="form-control" autocomplete="off" />
+                                        <input type="text" class="form-control form-control-sm" 
+                                        name="itemname" id="itemname" placeholder="Product Name" 
+                                        required class="form-control" autocomplete="off" 
+                                        onkeypress="validateItemName(this.value);"  onkeyup="validateItemName(this.value);"/>
+                                        <small class="text-danger" id="itemnameErr"></small>
                                     </div>
                                 </div>
 
@@ -107,7 +136,19 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label>HSN Code</label>
-                                        <input type="text" name="hsncode" id="hsncode" class="form-control form-control-sm"  placeholder="Enter a valid HSN Code.."  >
+                                        <select id="hsncode" onchange="" class="form-control form-control-sm" name="hsncode" id="category" autocomplete="off">
+                                            <option selected>Select HSN code</option>
+                                            <?php 
+                                            $sql = mysqli_query($dbcon,"SELECT * FROM hsncode_lookups");
+                                            while ($row = $sql->fetch_assoc()){	
+                                                echo '<option value="'.$row['hsncode'].'" >'.$row['hsncode'].'</option>';
+
+                                            }
+                                            ?>
+                                        </select>
+                                        <a href="#hsnModal" data-target="#hsnModal" data-toggle="modal"> 
+                                            <i class="fa fa-user-plus" aria-hidden="true"></i>Add New HSN code</a><br/>
+
                                     </div>
                                 </div>	
 
@@ -477,6 +518,29 @@
         var page_stockinqty = 0;
 
 
+        function validateItemName(val){
+                console.log(val);
+                if(val!=''){
+                    $.ajax ({
+                    url: 'validateItemName.php',
+                    type: 'post',
+                    data: {
+                        itemname:val,
+                        // description:description
+                    },
+                    //dataType: 'json',
+                    success:function(response){
+                        console.log(response);
+                        if(response==='0'){
+                            $('#itemnameErr').html('item name already exists');
+                        }else{
+                            $('#itemnameErr').html('');
+                        }
+                    }
+                    });
+                }
+           }
+
         $('document').ready(function(){	
             console.log("jp")
             $('#submitcategory').click(function(){
@@ -504,6 +568,35 @@
                 });
 
             });
+
+
+            $('#submithsncode').click(function(){
+                var hsncode = $('#addhsn').val();
+                //var suptype = $('#addsupptype').val();
+                //alert(groupname+description);
+                $.ajax ({
+                    url: 'addhsncode.php',
+                    type: 'post',
+                    data: {
+                        hsncode:hsncode,
+                        // description:description
+                    },
+                    //dataType: 'json',
+                    success:function(response){
+                        console.log(response);
+                        if(response!=='0' && response!=""){
+                            var new_option ="<option>"+response+"</option>";
+                            $('#hsncode').append(new_option);
+                            $('#hsnModal').modal('toggle');
+                        }else{
+                            alert('Error in inserting new Category,try another unique category');
+                        }
+                    }
+
+                });
+
+            });
+
 
             if(page_action=="edit"){
                 var edit_data = Page.get_edit_vals(page_item_code,page_table,"itemcode");
@@ -638,7 +731,9 @@
 
         $("form#salesitemform").submit(function(e){
             e.preventDefault();
-
+            if($('itemnameErr').html()!==""){
+              return false;
+            }
 
             var $form = $("#salesitemform");
             var data = getFormData($form);

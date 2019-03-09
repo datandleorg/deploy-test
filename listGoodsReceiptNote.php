@@ -172,6 +172,9 @@ include('header.php');
                                         }
                                         ?>						
                                         <script>
+                                             var table = $('#grn_table').DataTable();
+                                             table.order( [ 1, 'desc' ] ).draw();
+
                                             function deleteRecord_8(x)
                                             {
                                                 console.log(x);
