@@ -731,7 +731,7 @@
 
         $("form#salesitemform").submit(function(e){
             e.preventDefault();
-            if($('itemnameErr').html()!==""){
+            if($('itemnameErr').html()===""){
               return false;
             }
 
