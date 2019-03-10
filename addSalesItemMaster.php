@@ -731,10 +731,7 @@
 
         $("form#salesitemform").submit(function(e){
             e.preventDefault();
-            if($('itemnameErr').html()===""){
-              return false;
-            }
-
+      
             var $form = $("#salesitemform");
             var data = getFormData($form);
             console.log(data);
